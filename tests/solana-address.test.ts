@@ -34,12 +34,12 @@ describe("addressFamily", () => {
   });
 
   it("never applies EVM-style normalization to base58 addresses", () => {
-    // Lowercasing a base58 address mutates it into a different (invalid)
-    // address — Solana addresses are stored and compared as-is.
+    // Lowercasing a base58 address changes its bytes — with strict 32-byte
+    // decode validation a case-mangled address is (correctly) no longer a
+    // valid Solana address, so family routing rejects it outright.
     const lower = solanaMint.toLowerCase();
     expect(lower).not.toBe(solanaMint);
-    expect(addressFamily(lower)).toBe("solana"); // still syntactically base58…
-    // …so routing keeps base58 exactly as typed (no lowercase like EVM).
+    expect(addressFamily(lower)).toBeNull();
     expect(addressFamily("0X" + evm.slice(2))).toBeNull(); // 0X is not a valid EVM prefix
   });
 });

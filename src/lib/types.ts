@@ -9,6 +9,7 @@
  */
 
 import { EVM_ADDRESS_RE } from "./format";
+import { isValidSolanaAddress } from "./base58";
 
 export type DataStatus =
   | "connecting"
@@ -232,6 +233,8 @@ export function addressFamily(address: string): AddressFamily | null {
   const a = address.trim();
   if (!a) return null;
   if (EVM_ADDRESS_RE.test(a)) return "evm";
-  if (SOLANA_ADDRESS_RE.test(a)) return "solana";
+  // Strict base58 validation (charset + 32-byte decode) so typo'd or
+  // checksum-invalid strings are rejected as neither family.
+  if (isValidSolanaAddress(a)) return "solana";
   return null;
 }

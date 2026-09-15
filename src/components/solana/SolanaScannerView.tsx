@@ -1,17 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useDeferredValue, useMemo, useState } from "react";
-import { useSolanaScanner } from "@/hooks/useSolana";
+import { useDeferredValue, useMemo, useState, useCallback } from "react";
+import { useSolanaScanner, useDirectToken, type SolanaDirectLookupData } from "@/hooks/useSolana";
 import type { SolanaScanRow } from "@/services/solanaService";
 import { AssetLogo } from "@/components/ui/AssetLogo";
 import { Sparkline } from "@/components/charts/Sparkline";
 import { StateBlock, PanelHeader } from "@/components/kit/Kit";
 import { LiveStatusBadge, UpdatedAgo } from "@/components/ui/LiveStatus";
-import { Panel, Chip } from "@/components/ui/primitives";
+import { Panel, Chip, Tag } from "@/components/ui/primitives";
 import { changeTone, fmtPct, fmtUsd, fmtNum, shortHash, timeAgo } from "@/lib/format";
 import { useAgentPageContext } from "@/components/agent/AgentContext";
 import { SOLANA_ADDRESS_RE } from "@/lib/types";
+import { isValidSolanaAddress } from "@/lib/base58";
 import { NetworkIcon } from "@/components/ui/NetworkIcon";
 
 /**
@@ -64,11 +65,38 @@ export function SolanaScannerView({ initialMint }: { initialMint?: string }) {
   const [sort, setSort] = useState<SortId>("volume");
   const [q, setQ] = useState("");
   const dq = useDeferredValue(q);
+  const [directMint, setDirectMint] = useState<string | null>(
+    initialMint && isValidSolanaAddress(initialMint) ? initialMint : null,
+  );
+  const [directError, setDirectError] = useState<string | null>(null);
+  const direct = useDirectToken(directMint);
+
+  /** Search action (Enter / button): mint → direct live lookup, text → table filter. */
+  const submitSearch = useCallback(() => {
+    const v = q.trim();
+    if (!v) {
+      setDirectMint(null);
+      setDirectError(null);
+      return;
+    }
+    if (isValidSolanaAddress(v)) {
+      // Offline validation passed — now the live direct lookup runs.
+      setDirectMint(v);
+      setDirectError(null);
+    } else if (SOLANA_ADDRESS_RE.test(v)) {
+      // Base58-shaped but checksum-invalid: reject with zero provider calls.
+      setDirectError("Invalid Solana mint address");
+      setDirectMint(null);
+    } else {
+      // Normal text — stays a table filter; an active direct card is kept.
+      setDirectError(null);
+    }
+  }, [q]);
 
   const rows = useMemo(() => {
     let out = scanner.data ?? [];
     const s = dq.trim().toLowerCase();
-    if (s && !SOLANA_ADDRESS_RE.test(s.trim())) {
+    if (s && !isValidSolanaAddress(s.trim())) {
       out = out.filter(
         (r) =>
           (r.symbol ?? "").toLowerCase().includes(s) || (r.name ?? "").toLowerCase().includes(s),
@@ -102,6 +130,17 @@ export function SolanaScannerView({ initialMint }: { initialMint?: string }) {
         rowsShown: rows.length,
         liveQuotes: liveCount,
         activeSort: sort,
+        directLookup:
+          direct.state.phase === "found"
+            ? {
+                mint: direct.state.data.token.mint,
+                symbol: direct.state.data.token.symbol,
+                price: direct.state.data.token.priceUsd,
+                liquidity: direct.state.data.token.liquidityUsd,
+                dexId: direct.state.data.token.dexId,
+                pairsTotal: direct.state.data.pairsTotal,
+              }
+            : null,
         top: rows.slice(0, 12).map((r) => ({
           symbol: r.symbol,
           mint: r.mint,
@@ -163,22 +202,47 @@ export function SolanaScannerView({ initialMint }: { initialMint?: string }) {
             </div>
           }
         />
-        <div className="mb-2">
+        <form
+          className="mb-2 flex gap-2"
+          onSubmit={(e) => {
+            e.preventDefault();
+            submitSearch();
+          }}
+        >
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Filter by symbol or name… (paste a mint address to open its full scan)"
+            placeholder='Search symbol/name (e.g. "BONK") or paste a Solana mint address…'
             className="tnum w-full rounded-[4px] border border-line bg-panel px-3 py-2 text-[12.5px] text-text outline-none placeholder:text-faint focus:border-line-strong"
+            spellCheck={false}
           />
-        </div>
+          <button
+            type="submit"
+            className="h-10 shrink-0 rounded-[4px] btn-accent px-5 text-[12.5px] font-semibold text-green"
+          >
+            Scan
+          </button>
+        </form>
+        {directError ? (
+          <p className="mb-2 text-[11.5px] text-neg">{directError}</p>
+        ) : null}
+
+        <DirectLookupCard state={direct.state} onClear={() => setDirectMint(null)} />
 
         <StateBlock
           status={badgeStatus === "unavailable" ? "unavailable" : badgeStatus === "syncing" ? "syncing" : "live"}
           loadingRows={8}
           empty={
-            <p className="py-10 text-center text-[12.5px] text-faint">
-              No tracked Solana tokens match this filter — the scanner only renders verified data.
-            </p>
+            directMint ? (
+              <p className="py-10 text-center text-[12.5px] text-faint">
+                Direct lookup active — the resolved token is shown above.
+              </p>
+            ) : (
+              <p className="py-10 text-center text-[12.5px] text-faint">
+                No tracked Solana tokens match this filter — the scanner only renders verified data.
+                Paste a mint address and press Scan for a direct live lookup.
+              </p>
+            )
           }
         >
           <div className="overflow-x-auto">
@@ -279,6 +343,206 @@ export function SolanaScannerView({ initialMint }: { initialMint?: string }) {
         compare the current quote with the engine&apos;s own stored observation ≥ 24h old (null
         until history exists). Whale and smart-money counts come from verified largest-account
         balance deltas on Solana RPC — never modeled, never substituted.
+      </p>
+    </div>
+  );
+}
+
+/* ── Direct mint lookup result ───────────────────────────── */
+
+function LookupRow({ k, v, cls = "" }: { k: string; v: React.ReactNode; cls?: string }) {
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <dt className="text-muted">{k}</dt>
+      <dd className={`text-right ${cls}`}>{v}</dd>
+    </div>
+  );
+}
+
+export function DirectLookupCard({
+  state,
+  onClear,
+}: {
+  state: ReturnType<typeof useDirectToken>["state"];
+  onClear: () => void;
+}) {
+  if (state.phase === "idle") return null;
+
+  if (state.phase === "resolving") {
+    return (
+      <div className="mb-3 rounded-[6px] border border-line bg-panel px-4 py-3 text-[12.5px] text-muted">
+        <span className="live-dot" /> Resolving Solana token…
+      </div>
+    );
+  }
+  if (state.phase === "invalid") {
+    return (
+      <div className="mb-3 rounded-[6px] border border-neg/30 bg-neg/10 px-4 py-3 text-[12.5px] text-neg">
+        Invalid Solana mint address
+        <button type="button" onClick={onClear} className="ml-3 text-faint hover:text-text">
+          dismiss
+        </button>
+      </div>
+    );
+  }
+  if (state.phase === "no-market") {
+    return (
+      <div className="mb-3 rounded-[6px] border border-warn/30 bg-warn/10 px-4 py-3 text-[12.5px] text-warn">
+        Solana mint found, but no verified market pair is currently available.
+        <span className="ml-2 text-faint">
+          {state.metadata?.symbol ? `(${state.metadata.symbol})` : ""}
+        </span>
+        <button type="button" onClick={onClear} className="ml-3 text-faint hover:text-text">
+          dismiss
+        </button>
+      </div>
+    );
+  }
+  if (state.phase === "not-found") {
+    return (
+      <div className="mb-3 rounded-[6px] border border-warn/30 bg-warn/10 px-4 py-3 text-[12.5px] text-warn">
+        Token not found or unavailable from current providers.
+        <button type="button" onClick={onClear} className="ml-3 text-faint hover:text-text">
+          dismiss
+        </button>
+      </div>
+    );
+  }
+  if (state.phase === "error") {
+    return (
+      <div className="mb-3 rounded-[6px] border border-neg/30 bg-neg/10 px-4 py-3 text-[12.5px] text-neg">
+        {state.message}
+        <button type="button" onClick={onClear} className="ml-3 text-faint hover:text-text">
+          dismiss
+        </button>
+      </div>
+    );
+  }
+  if (state.phase === "found") {
+    return <DirectLookupFound data={state.data} onClear={onClear} />;
+  }
+  return null;
+}
+
+function DirectLookupFound({
+  data,
+  onClear,
+}: {
+  data: SolanaDirectLookupData;
+  onClear: () => void;
+}) {
+  const t = data.token;
+  const ratio =
+    t.buys24h != null && t.sells24h != null && t.sells24h > 0 ? t.buys24h / t.sells24h : null;
+  return (
+    <div className="mb-3 rounded-[6px] border border-green/30 bg-panel p-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <AssetLogo symbol={t.symbol} url={t.logoUrl} size={36} />
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-[15px] font-semibold">{t.symbol ?? "—"}</span>
+              <Tag>Solana · direct lookup</Tag>
+              <Link
+                href={`/app/token/${encodeURIComponent(t.mint)}`}
+                className="text-[11.5px] text-green hover:underline"
+              >
+                Full intelligence →
+              </Link>
+            </div>
+            <p className="mt-0.5 text-[11.5px] text-muted">{t.name ?? "Token name unavailable"}</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className={`tnum text-[16px] font-semibold ${changeTone(t.change24hPct)}`}>
+            {fmtPct(t.change24hPct)} 24H
+          </span>
+          <button type="button" onClick={onClear} className="text-faint hover:text-text" title="Clear">
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <dl className="tnum mt-3 grid grid-cols-2 gap-x-6 gap-y-1.5 text-[12.5px] sm:grid-cols-3">
+        <LookupRow k="Price" v={fmtUsd(t.priceUsd)} />
+        <LookupRow k="Market Cap" v={t.marketCap != null ? fmtUsd(t.marketCap) : "Data unavailable"} />
+        <LookupRow k="FDV" v={t.fdv != null ? fmtUsd(t.fdv) : "—"} />
+        <LookupRow k="Liquidity" v={t.liquidityUsd != null ? fmtUsd(t.liquidityUsd) : "Data unavailable"} />
+        <LookupRow k="24H Volume" v={t.volume24hUsd != null ? fmtUsd(t.volume24hUsd) : "Data unavailable"} />
+        <LookupRow
+          k="Buys / Sells"
+          v={t.buys24h != null && t.sells24h != null ? `${fmtNum(t.buys24h)} / ${fmtNum(t.sells24h)}` : "—"}
+        />
+        <LookupRow k="Buy/Sell Ratio" v={ratio != null ? ratio.toFixed(2) : "—"} />
+        <LookupRow k="Activity 24H" v={t.txns24h != null ? fmtNum(t.txns24h) : "—"} />
+        <LookupRow k="DEX" v={t.dexId ?? "—"} />
+        <LookupRow k="Pair Age" v={t.pairCreatedAt != null ? timeAgo(t.pairCreatedAt) : "—"} />
+        <LookupRow k="Supply" v={t.supply != null ? fmtNum(t.supply) : "—"} />
+        <LookupRow k="Holders" v={<span className="text-faint">—</span>} />
+        <LookupRow
+          k="Top-10 concentration"
+          v={data.concentration.top10 != null ? `${data.concentration.top10.toFixed(1)}%` : "Data unavailable"}
+        />
+        <LookupRow k="Quote token" v={data.pairs[0]?.quoteToken ?? "—"} />
+        <LookupRow k="Whale events (24h)" v={<span className="text-faint">{data.whales.length}</span>} />
+      </dl>
+
+      <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px]">
+        <span className="text-faint">Mint:</span>
+        <code className="tnum break-all rounded-[4px] border border-line bg-panel-2 px-2 py-1">
+          {t.mint}
+        </code>
+        <a
+          href={`https://solscan.io/token/${t.mint}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-green hover:underline"
+        >
+          Solscan ↗
+        </a>
+        {t.pairAddress ? (
+          <a
+            href={`https://solscan.io/account/${t.pairAddress}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-green hover:underline"
+          >
+            Pair ↗
+          </a>
+        ) : null}
+      </div>
+
+      {data.pairsTotal > 1 ? (
+        <div className="mt-3 border-t border-line-soft pt-2.5">
+          <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
+            Markets ({data.pairsTotal} pairs — primary is the most liquid; metrics are never merged)
+          </p>
+          <ul className="tnum space-y-1 text-[11.5px]">
+            {data.pairs.slice(0, 5).map((p, i) => (
+              <li key={`${p.pairAddress ?? i}`} className="flex items-center justify-between gap-3">
+                <span className="text-muted">
+                  {i === 0 ? <span className="mr-1.5 text-green">Primary</span> : null}
+                  {p.dexId ?? "unknown"} {p.pairAddress ? `· ${shortHash(p.pairAddress, 4, 4)}` : ""}
+                  {p.quoteToken ? ` · ${p.quoteToken}` : ""}
+                </span>
+                <span className="flex gap-4">
+                  <span>{p.liquidityUsd != null ? fmtUsd(p.liquidityUsd) : "—"}</span>
+                  <span className="w-20 text-right text-faint">
+                    {p.volume24hUsd != null ? fmtUsd(p.volume24hUsd) : "—"}
+                  </span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+      {data.errors.length > 0 ? (
+        <p className="mt-3 text-[10.5px] text-faint">{data.errors.join(" · ")}</p>
+      ) : null}
+      <p className="mt-2 text-[10.5px] text-faint">
+        {data.priceBasis ?? "Price basis unavailable"} · resolved live on search — never cached as
+        demo data
       </p>
     </div>
   );

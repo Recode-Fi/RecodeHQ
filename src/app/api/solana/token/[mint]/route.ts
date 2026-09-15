@@ -1,16 +1,25 @@
 import { NextResponse } from "next/server";
 import { getSolanaSyncEngine } from "@/server/solana/engine";
 import { getSolanaStore } from "@/server/solana/store";
-import { holderConcentration, tokenDetail } from "@/server/solana/services/rows";
-import { SOLANA_ADDRESS_RE } from "@/lib/types";
+import { holderConcentration } from "@/server/solana/services/rows";
+import { directLookup } from "@/server/solana/services/directLookup";
+import { isValidSolanaAddress } from "@/lib/base58";
 
 export const dynamic = "force-dynamic";
 
 /**
- * Solana token intelligence for one mint address (base58 — never
- * processed as an EVM contract). Includes verified market state,
- * holder concentration (Solana RPC largest accounts), recent whale
- * events and the stored price sparkline.
+ * Solana token intelligence — DIRECT mint lookup (arbitrary valid CA,
+ * not limited to the tracked universe):
+ *   1. Validate base58 + 32-byte checksum (offline, zero provider calls)
+ *   2. Live provider resolution (DexScreener pairs + Solana RPC
+ *      metadata/holders), with a short-lived server cache
+ *   3. Verified values only; unavailable fields stay null
+ *
+ * Response contract:
+ *   400 + "Invalid Solana mint address"        — malformed input
+ *   status "live"/"stale" + data               — market resolved
+ *   status "empty" + reason "no-market"        — mint exists, no pair
+ *   status "empty" + reason "not-found"        — unresolvable
  */
 export async function GET(
   _request: Request,
@@ -19,37 +28,75 @@ export async function GET(
   getSolanaSyncEngine().ensureStarted();
   const { mint } = await params;
   const address = (mint ?? "").trim();
-  if (!SOLANA_ADDRESS_RE.test(address)) {
+  if (!isValidSolanaAddress(address)) {
     return NextResponse.json(
       { status: "error", error: "Invalid Solana mint address" },
       { status: 400 },
     );
   }
-  const d = getSolanaStore().get();
-  const detail = tokenDetail(d, address);
-  if (!detail) {
+
+  const engine = getSolanaSyncEngine();
+  const result = await directLookup(address, {
+    dexscreener: engine.dexscreener,
+    rpc: engine.rpc,
+    store: getSolanaStore(),
+  });
+
+  if (result.status === "mint-only") {
     return NextResponse.json({
       status: "empty",
-      data: null,
-      error: "Mint not indexed — it may exist on-chain but is outside the tracked universe",
+      reason: "no-market",
+      data: {
+        chain: "solana",
+        mint: result.mint,
+        metadata: result.metadata,
+        pairsTotal: 0,
+      },
+      error: "Solana mint found, but no verified market pair is currently available.",
     });
   }
-  const conc10 = holderConcentration(detail.holders, 10);
-  const price = detail.token.priceUsd;
+  if (result.status === "not-found") {
+    return NextResponse.json({
+      status: "empty",
+      reason: "not-found",
+      data: null,
+      error: "Token not found or unavailable from current providers.",
+    });
+  }
+
+  const token = result.token as NonNullable<typeof result.token>;
+  const conc10 = result.holders
+    ? holderConcentration(result.holders, 10)
+    : { value: null as number | null, coverage: 0 };
+
   return NextResponse.json({
-    status: detail.dataStatus === "unavailable" ? "syncing" : detail.dataStatus,
+    status: "live",
     data: {
       chain: "solana",
-      ...detail,
+      direct: true,
+      token,
+      metadata: result.metadata,
+      holders: result.holders,
       concentration: {
         top10: conc10.value,
         coverage: conc10.coverage,
         basis: "Sum of largest-account share percentages (share of verified supply)",
       },
+      holdersTotal: null, // public Solana RPC exposes no global holder count — never estimated
+      pairs: result.pairs,
+      pairsTotal: result.pairsTotal,
+      whales: getSolanaStore()
+        .get()
+        .whales.filter((w) => w.mint === address)
+        .slice(0, 25),
+      errors: result.errors,
       priceBasis:
-        price != null && detail.token.sources.length > 0
-          ? `verified DEX price (${detail.token.sources.join(", ")})`
+        token.priceUsd != null
+          ? `verified DEX price (${[...result.sources, "direct-lookup"].join(", ")})`
           : null,
+      dataStatus: "live",
+      sparkline: getSolanaStore().get().priceHistory[address]?.map((p) => p.p) ?? [],
+      resolvedAt: result.resolvedAt,
     },
   });
 }

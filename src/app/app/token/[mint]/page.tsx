@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { SolanaAssetView } from "@/components/solana/SolanaAssetView";
-import { SOLANA_ADDRESS_RE } from "@/lib/types";
+import { isValidSolanaAddress } from "@/lib/base58";
 
 export async function generateMetadata({
   params,
@@ -23,7 +23,7 @@ export default async function SolanaTokenPage({
 }) {
   const { mint } = await params;
   const address = (mint ?? "").trim();
-  if (!SOLANA_ADDRESS_RE.test(address)) {
+  if (!isValidSolanaAddress(address)) {
     return (
       <div className="mx-auto max-w-2xl py-20 text-center">
         <h1 className="text-lg font-semibold">Invalid Solana mint address</h1>

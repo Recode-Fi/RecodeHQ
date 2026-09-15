@@ -188,6 +188,19 @@ export class SolanaRpcProvider {
     return r?.value?.uiAmount ?? null;
   }
 
+  /**
+   * Mint existence + metadata (supply, decimals) in one call. Returns null
+   * when the account is not a token mint or the RPC is unavailable — the
+   * caller decides between "mint-only" and "not resolvable".
+   */
+  async getTokenInfo(mint: string): Promise<{ supply: number | null; decimals: number | null } | null> {
+    const r = await this.call<{
+      value: { uiAmount: number | null; decimals: number | null; amount: string } | null;
+    }>("getTokenSupply", [mint]);
+    if (!r?.value) return null;
+    return { supply: r.value.uiAmount, decimals: r.value.decimals };
+  }
+
   /** Recent signature activity for any address (wallet or mint). */
   async getSignatures(address: string, limit = 25): Promise<RpcSignature[] | null> {
     const r = await this.call<

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSolanaSyncEngine } from "@/server/solana/engine";
 import { fetchSolanaWalletBalances } from "@/server/solana/services/walletIntel";
-import { SOLANA_ADDRESS_RE } from "@/lib/types";
+import { isValidSolanaAddress } from "@/lib/base58";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +14,7 @@ export async function GET(request: Request) {
   getSolanaSyncEngine().ensureStarted();
   const url = new URL(request.url);
   const address = (url.searchParams.get("address") ?? "").trim();
-  if (!SOLANA_ADDRESS_RE.test(address)) {
+  if (!isValidSolanaAddress(address)) {
     return NextResponse.json(
       { status: "error", error: "Invalid Solana address (base58 expected, not 0x…)" },
       { status: 400 },

@@ -4,6 +4,7 @@ import { toWhaleFeed, holderConcentration, tokenDetail } from "./services/rows";
 import { buildScannerRows, smartMoneyRankings } from "./services/scanner";
 import { SOLANA_CONFIG } from "./config";
 import { SOLANA_ADDRESS_RE } from "@/lib/types";
+import { isValidSolanaAddress } from "@/lib/base58";
 import type { ToolDef } from "@/server/agent/types";
 import type { SolanaToken } from "./types";
 
@@ -144,12 +145,28 @@ const getSolanaTokenIntel: ToolDef = {
   async execute({ token }) {
     engine();
     const query = String(token ?? "");
-    const d = getSolanaStore().get();
-    const resolved = resolveToken(query);
+    let d = getSolanaStore().get();
+    let resolved = resolveToken(query);
     if (SOLANA_ADDRESS_RE.test(query.trim()) && !resolved) {
-      return err(
-        "This base58 address is not indexed by the Solana engine. It may exist on-chain but is outside the tracked universe.",
-      );
+      if (!isValidSolanaAddress(query.trim())) {
+        return err("Invalid Solana mint address.");
+      }
+      // Direct lookup for an untracked mint — resolves live market data
+      // and upserts it into the verified store (no fabrication).
+      const { directLookup } = await import("./services/directLookup");
+      const lookup = await directLookup(query.trim(), {
+        dexscreener: getSolanaSyncEngine().dexscreener,
+        rpc: getSolanaSyncEngine().rpc,
+        store: getSolanaStore(),
+      });
+      if (lookup.status === "mint-only") {
+        return err("Solana mint found, but no verified market pair is currently available.");
+      }
+      if (lookup.status === "not-found") {
+        return err("Token not found or unavailable from current providers.");
+      }
+      d = getSolanaStore().get();
+      resolved = d.tokens[query.trim()] ?? null;
     }
     if (/^0x[a-fA-F0-9]{40}$/.test(query.trim())) {
       return err("0x… is an EVM address, not a Solana mint. Use the EVM tools for EVM contracts.");
