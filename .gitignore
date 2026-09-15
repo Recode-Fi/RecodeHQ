@@ -37,3 +37,7 @@ next-env.d.ts
 tmp-*.txt
 .recode-debug-last-request.json
 .dev-*.log*
+
+# dev server runtime logs
+dev.log
+dev-err.log

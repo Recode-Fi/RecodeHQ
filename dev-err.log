@@ -1,8 +1,0 @@
-[recode-agent] provider stream failed: Error: Provider error 429: [{
-  "error": {
-    "code": 429,
-    "message": "You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota e
-    at OpenAICompatibleProvider.chat (C:\Users\ramad\.cline\data\workspaces\chat\recode\.next\dev\server\chunks\[root-of-the-server]__1ixvx7t._.js:1459:23)
-    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
-    at async runAgentTurn (C:\Users\ramad\.cline\data\workspaces\chat\recode\.next\dev\server\chunks\[root-of-the-server]__1ixvx7t._.js:953:30)
-    at async Object.start (C:\Users\ramad\.cline\data\workspaces\chat\recode\.next\dev\server\chunks\[root-of-the-server]__1ixvx7t._.js:130:34)
