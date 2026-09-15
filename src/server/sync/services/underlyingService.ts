@@ -79,10 +79,12 @@ export async function syncUnderlyingMcaps(
       }
       /* previous-close fallback: Yahoo v8 chart meta (verified underlying
          previous close) — used when RHJ is unreachable, so the token's real
-         24H change stays computable even during RHJ outages. */
+         24H change stays computable even during RHJ outages. range=2d makes
+         chartPreviousClose the PREVIOUS TRADING DAY's close (the correct
+         24H-change reference; a wider range would anchor to days earlier). */
       if (previousClose == null) {
         try {
-          const chart = await yahoo.chart(underlyingSymbol, "5d", "1d");
+          const chart = await yahoo.chart(underlyingSymbol, "2d", "1d");
           if (chart && chart.previousClose != null && chart.previousClose > 0) {
             previousClose = chart.previousClose;
             if (source == null) source = "Yahoo chart previous close";

@@ -23,6 +23,10 @@ export async function GET(request: Request) {
     status: ranked.length > 0 || d.updatedAt != null ? "live" : "syncing",
     data: ranked.length > 0 ? ranked : null,
     windowHours: hours,
+    error:
+      ranked.length === 0
+        ? "No verified whale flows on Solana in this window yet — flows appear only when a verified largest-account balance delta crosses the whale threshold."
+        : undefined,
     basis:
       "Verified largest-account balance deltas (Solana RPC). Net = accumulation − distribution; transfers excluded. ROI/win-rate require per-wallet trade attribution — unavailable, not estimated.",
   });
