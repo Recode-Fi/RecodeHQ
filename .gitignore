@@ -41,3 +41,6 @@ tmp-*.txt
 # dev server runtime logs
 dev.log
 dev-err.log
+
+# dev server pid file
+dev-pid.txt
