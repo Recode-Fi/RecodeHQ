@@ -57,16 +57,17 @@ export const THEME_COOKIE = "recode.theme";
 
 /**
  * Theme is SSR-rendered from the persistence cookie so the server and the
- * client hydrate the exact same <html data-theme> state. LIGHT is the
- * default: no cookie or an invalid value = light. Only an explicitly saved
- * "dark" preference renders dark. The ThemeProvider keeps this attribute
- * in sync and mirrors the choice to the cookie on every change, so there
- * is no pre-hydration DOM mutation and no flash of the wrong theme by
- * construction.
+ * client hydrate the exact same <html data-theme> state. DARK is the
+ * default: no cookie or an unrecognized value renders dark, so every new
+ * user's first visible frame is already dark (no white flash). Only an
+ * explicitly saved "light" preference renders light. The ThemeProvider
+ * keeps this attribute in sync and mirrors the choice to the cookie on
+ * every change, so there is no pre-hydration DOM mutation and no flash of
+ * the wrong theme by construction.
  */
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = await cookies();
-  const theme = cookieStore.get(THEME_COOKIE)?.value === "dark" ? "dark" : "light";
+  const theme = cookieStore.get(THEME_COOKIE)?.value === "light" ? "light" : "dark";
   return (
     <html lang="en" data-theme={theme} className={`${sans.variable} ${mono.variable}`}>
       <body>

@@ -1,10 +1,12 @@
 "use client";
 
 /**
- * RECODE theme system - LIGHT is the default (white + #CCFF00); dark remains
- * fully available via the toggle. The SSR-rendered <html data-theme>
- * attribute comes from the persistence cookie (see app/layout.tsx), so
- * server and client hydrate identically. This provider reads that attribute
+ * RECODE theme system - DARK is the default (deep black-green + #00C805);
+ * light remains fully available via the toggle. The SSR-rendered
+ * <html data-theme> attribute comes from the persistence cookie (see
+ * app/layout.tsx) — no cookie = dark, an explicitly saved "light" renders
+ * light — so server and client hydrate identically and the first visible
+ * frame is already correct (no flash). This provider reads that attribute
  * at mount, keeps it in sync on toggle, and mirrors the choice to the
  * cookie + localStorage (same key). Pre-cookie localStorage preferences
  * migrate once, post-hydration. Switching UI colors only - no data or
@@ -21,14 +23,14 @@ const ThemeContext = createContext<{
   theme: Theme;
   setTheme: (t: Theme) => void;
   toggle: () => void;
-}>({ theme: "light", setTheme: () => {}, toggle: () => {} });
+}>({ theme: "dark", setTheme: () => {}, toggle: () => {} });
 
 function persist(theme: Theme) {
   try {
     window.localStorage.setItem(STORAGE_KEY, theme);
     document.cookie = `${STORAGE_KEY}=${theme}; path=/; max-age=${COOKIE_MAX_AGE}; samesite=lax`;
   } catch {
-    /* storage unavailable - SSR default (light) remains */
+    /* storage unavailable - SSR default (dark) remains */
   }
 }
 
@@ -39,17 +41,17 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // DOM from the very first render (no transient wrong-theme apply).
   const [theme, setThemeState] = useState<Theme>(() => {
     if (typeof document !== "undefined") {
-      return document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+      return document.documentElement.dataset.theme === "light" ? "light" : "dark";
     }
-    return "light";
+    return "dark";
   });
   const firstApply = useRef(true);
 
   useEffect(() => {
     // Legacy migration: pre-cookie preferences stored only in localStorage
     // apply now - post-hydration - and are mirrored to the cookie so the
-    // next SSR request renders them. (Light is the SSR default; only an
-    // explicitly saved "dark" needs restoring here.)
+    // next SSR request renders them. (Dark is the SSR default; only an
+    // explicitly saved preference needs restoring here.)
     try {
       const saved = window.localStorage.getItem(STORAGE_KEY);
       if (saved === "dark" && document.documentElement.dataset.theme !== "dark") {
