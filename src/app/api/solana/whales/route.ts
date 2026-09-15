@@ -19,7 +19,9 @@ export async function GET(request: Request) {
   let events = toWhaleFeed(d);
   if (mint) events = events.filter((e) => e.mint === mint);
   return NextResponse.json({
-    status: events.length > 0 ? "live" : d.updatedAt ? "live" : "syncing",
+    // Engine running but no verified events yet → "live" with null data so the
+    // UI renders the honest empty message instead of an endless skeleton.
+    status: events.length > 0 || d.updatedAt != null ? "live" : "syncing",
     data: events.length > 0 ? events : null,
     error: events.length === 0 ? "No whale events observed yet" : undefined,
   });

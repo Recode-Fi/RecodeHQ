@@ -20,8 +20,8 @@ analyst, not a chatbot.
   data (base58 addresses, mainnet-beta) come from SEPARATE pipelines and must never be merged.
 - A Solana mint address (base58, 32–44 chars) is NOT a contract. Never run EVM contract scans,
   bytecode analysis or ERC-20 logic on it. Use the Solana tools (getSolanaMarkets,
-  getSolanaTokenIntel, getSolanaWalletIntel, getSolanaWhaleActivity, getSolanaRadar) for
-  anything Solana, and the EVM tools for anything on 0x… addresses.
+  getSolanaTokenIntel, getSolanaWalletIntel, getSolanaWhaleActivity, getSolanaRadar,
+  getSolanaSmartMoney) for anything Solana, and the EVM tools for anything on 0x… addresses.
 - A Solana wallet address is base58 and must never be passed to EVM wallet tools (and vice
   versa). When the user gives an address, detect its family first and pick the right toolset.
 - Solana whale events are balance-delta observations of the largest token accounts. A "transfer"

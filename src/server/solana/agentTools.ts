@@ -1,6 +1,7 @@
 import { getSolanaSyncEngine } from "./engine";
 import { getSolanaStore } from "./store";
-import { toRows, toWhaleFeed, holderConcentration, tokenDetail } from "./services/rows";
+import { toWhaleFeed, holderConcentration, tokenDetail } from "./services/rows";
+import { buildScannerRows, smartMoneyRankings } from "./services/scanner";
 import { SOLANA_CONFIG } from "./config";
 import { SOLANA_ADDRESS_RE } from "@/lib/types";
 import type { ToolDef } from "@/server/agent/types";
@@ -41,20 +42,39 @@ function resolveToken(query: string): SolanaToken | null {
   );
 }
 
+const SCANNER_SORTS = [
+  "volume",
+  "liquidity",
+  "gainers",
+  "losers",
+  "activity",
+  "new",
+  "whales",
+  "smart-money",
+] as const;
+
 const getSolanaMarkets: ToolDef = {
   name: "getSolanaMarkets",
   description:
-    "Top tracked Solana tokens with verified live DEX market data: price, market cap, liquidity, " +
-    "24h volume, 24h change, buy/sell activity, DEX and pair info. Chain identity: Solana " +
-    "mainnet-beta (mint addresses are base58, not EVM contracts).",
+    "Top tracked Solana tokens with verified live DEX market data: price, market cap, FDV, " +
+    "liquidity, 24h volume, 24h change, buy/sell activity, CALCULATED buy/sell ratio, " +
+    "liquidity/volume 24h deltas, DEX and pair info, whale and smart-money activity counts. " +
+    "Supports sorting. Chain identity: Solana mainnet-beta (mint addresses are base58, not " +
+    "EVM contracts).",
   parameters: [
     { name: "limit", type: "number", description: "How many tokens (default 12, max 40)." },
     { name: "query", type: "string", description: "Optional filter by symbol/name substring." },
+    {
+      name: "sort",
+      type: "string",
+      description: "Sort key.",
+      enum: [...SCANNER_SORTS],
+    },
   ],
-  async execute({ limit, query }) {
+  async execute({ limit, query, sort }) {
     engine();
     const d = getSolanaStore().get();
-    let rows = toRows(d).filter((r) => r.price != null);
+    let rows = buildScannerRows(d);
     const q = String(query ?? "").trim().toLowerCase();
     if (q) {
       rows = rows.filter(
@@ -62,12 +82,28 @@ const getSolanaMarkets: ToolDef = {
           (r.symbol ?? "").toLowerCase().includes(q) || (r.name ?? "").toLowerCase().includes(q),
       );
     }
-    rows.sort((a, b) => (b.volume24h ?? 0) - (a.volume24h ?? 0));
+    const key = SCANNER_SORTS.includes(sort as (typeof SCANNER_SORTS)[number])
+      ? (sort as (typeof SCANNER_SORTS)[number])
+      : "volume";
+    const by = (r: (typeof rows)[number]) => {
+      switch (key) {
+        case "liquidity": return r.liquidity ?? -Infinity;
+        case "gainers": return r.change24hPct ?? -Infinity;
+        case "losers": return -(r.change24hPct ?? Infinity);
+        case "activity": return r.txns24h ?? -Infinity;
+        case "new": return r.pairAgeMs != null ? -r.pairAgeMs : Infinity;
+        case "whales": return r.whaleEvents24h;
+        case "smart-money": return r.smartWallets24h;
+        default: return r.volume24h ?? -Infinity;
+      }
+    };
+    rows.sort((a, b) => by(b) - by(a));
     const n = Math.max(1, Math.min(40, Math.floor(Number(limit) || 12)));
     return {
       provenance: rows.length ? "LIVE" : "UNAVAILABLE",
       chain: "solana",
       network: "mainnet-beta",
+      sort: key,
       count: rows.length,
       tokens: rows.slice(0, n).map((r) => ({
         mint: r.mint,
@@ -81,8 +117,14 @@ const getSolanaMarkets: ToolDef = {
         volume24hUsd: r.volume24h != null ? round(r.volume24h) : null,
         buys24h: r.buys24h,
         sells24h: r.sells24h,
+        buySellRatio: r.buySellRatio != null ? round(r.buySellRatio) : null,
+        liquidityChange24hPct: round(r.liquidityChange24hPct),
+        volumeChange24hPct: round(r.volumeChange24hPct),
+        pairAgeMs: r.pairAgeMs,
         dexId: r.dexId,
         pairAddress: r.pairAddress,
+        whaleEvents24h: r.whaleEvents24h,
+        smartWallets24h: r.smartWallets24h,
         dataStatus: r.dataStatus,
       })),
       note: rows.length === 0 ? "No verified Solana quotes available yet." : null,
@@ -284,10 +326,42 @@ const getSolanaRadar: ToolDef = {
   },
 };
 
+const getSolanaSmartMoney: ToolDef = {
+  name: "getSolanaSmartMoney",
+  description:
+    "Solana wallets ranked by verified net on-chain flow (accumulation − distribution) from " +
+    "whale-size largest-account balance deltas. Transfers are direction-neutral and excluded " +
+    "from the net. ROI/win-rate are unavailable (no per-wallet trade attribution) — never " +
+    "estimated.",
+  parameters: [
+    { name: "windowHours", type: "number", description: "Look-back window (default 24, max 720)." },
+    { name: "limit", type: "number", description: "Max wallets (default 15, max 30)." },
+  ],
+  async execute({ windowHours, limit }) {
+    engine();
+    const d = getSolanaStore().get();
+    const hours = Math.max(1, Math.min(720, Number(windowHours) || 24));
+    const ranked = smartMoneyRankings(d, Date.now(), hours * 3_600_000, 30);
+    const n = Math.max(1, Math.min(30, Math.floor(Number(limit) || 15)));
+    return {
+      provenance: ranked.length ? "LIVE" : "UNAVAILABLE",
+      chain: "solana",
+      network: "mainnet-beta",
+      windowHours: hours,
+      basis:
+        "Verified largest-account balance deltas (Solana RPC); net = accumulation − distribution, transfers excluded",
+      count: ranked.length,
+      wallets: ranked.slice(0, n),
+      note: ranked.length === 0 ? "No verified flows in this window yet." : null,
+    };
+  },
+};
+
 export const SOLANA_AGENT_TOOLS: ToolDef[] = [
   getSolanaMarkets,
   getSolanaTokenIntel,
   getSolanaWalletIntel,
   getSolanaWhaleActivity,
   getSolanaRadar,
+  getSolanaSmartMoney,
 ];

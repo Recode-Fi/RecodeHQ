@@ -1,5 +1,5 @@
-import { SmartMoneyView } from "@/components/smartmoney/SmartMoneyView";
+import { SmartMoneySwitch } from "@/components/smartmoney/SmartMoneySwitch";
 
 export default function SmartMoneyPage() {
-  return <SmartMoneyView />;
+  return <SmartMoneySwitch />;
 }

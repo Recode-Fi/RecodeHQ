@@ -16,6 +16,49 @@ export interface SolanaEnvelope<T> {
   error?: string;
 }
 
+/** Solana scanner row (enriched, server-calculated derivatives). */
+export interface SolanaScanRow {
+  chain: "solana";
+  mint: string;
+  symbol: string | null;
+  name: string | null;
+  logoUrl: string | null;
+  price: number | null;
+  marketCap: number | null;
+  fdv: number | null;
+  liquidity: number | null;
+  liquidityChange24hPct: number | null;
+  volume24h: number | null;
+  volumeChange24hPct: number | null;
+  change24hPct: number | null;
+  buys24h: number | null;
+  sells24h: number | null;
+  buySellRatio: number | null;
+  txns24h: number | null;
+  dexId: string | null;
+  pairAddress: string | null;
+  pairAgeMs: number | null;
+  supply: number | null;
+  whaleEvents24h: number;
+  smartWallets24h: number;
+  sparkline: number[];
+  dataStatus: "live" | "stale" | "unavailable";
+  updatedAt: number | null;
+  sources: string[];
+}
+
+/** Solana smart-money wallet ranking row. */
+export interface SolanaSmartMoneyWallet {
+  chain: "solana";
+  wallet: string;
+  netUsd: number | null;
+  accumulations: number;
+  distributions: number;
+  transfers: number;
+  assets: string[];
+  lastActive: number;
+}
+
 /** Solana token detail (mint-address intelligence surface). */
 export interface SolanaTokenIntel {
   chain: "solana";
@@ -70,6 +113,16 @@ export const solanaService = {
     return getJson<LiveSolanaRow[]>("/api/solana/markets");
   },
 
+  scanner(): Promise<SolanaEnvelope<SolanaScanRow[]>> {
+    return getJson<SolanaScanRow[]>("/api/solana/scanner");
+  },
+
+  smartMoney(windowHours = 24): Promise<SolanaEnvelope<SolanaSmartMoneyWallet[]>> {
+    return getJson<SolanaSmartMoneyWallet[]>(
+      `/api/solana/smart-money?windowHours=${encodeURIComponent(windowHours)}`,
+    );
+  },
+
   token(mint: string): Promise<SolanaEnvelope<SolanaTokenIntel>> {
     return getJson<SolanaTokenIntel>(`/api/solana/token/${encodeURIComponent(mint)}`);
   },
@@ -95,4 +148,12 @@ export const solanaService = {
   },
 };
 
-export type { LiveSolanaRow, SolanaEngineStatus, SolanaRadarSignal, SolanaWhaleEvent, SolanaWalletActivity, SolanaWalletBalances };
+export type {
+  LiveSolanaRow,
+  SolanaEngineStatus,
+  SolanaRadarSignal,
+  SolanaToken,
+  SolanaWhaleEvent,
+  SolanaWalletActivity,
+  SolanaWalletBalances,
+};

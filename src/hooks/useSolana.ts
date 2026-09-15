@@ -6,6 +6,8 @@ import {
   type LiveSolanaRow,
   type SolanaEngineStatus,
   type SolanaRadarSignal,
+  type SolanaScanRow,
+  type SolanaSmartMoneyWallet,
   type SolanaTokenIntel,
   type SolanaWalletActivity,
   type SolanaWalletBalances,
@@ -24,6 +26,21 @@ export function useSolanaStatus(): { data: SolanaEngineStatus | null; status: st
 
 export function useSolanaMarkets(): { data: LiveSolanaRow[] | null; status: string } {
   const poll = useSyncPolling<LiveSolanaRow[]>("/api/solana/markets", 15_000);
+  return { data: poll.data, status: poll.status };
+}
+
+export function useSolanaScanner(): { data: SolanaScanRow[] | null; status: string } {
+  const poll = useSyncPolling<SolanaScanRow[]>("/api/solana/scanner", 15_000);
+  return { data: poll.data, status: poll.status };
+}
+
+export function useSolanaSmartMoney(
+  windowHours = 24,
+): { data: SolanaSmartMoneyWallet[] | null; status: string } {
+  const poll = useSyncPolling<SolanaSmartMoneyWallet[]>(
+    `/api/solana/smart-money?windowHours=${windowHours}`,
+    20_000,
+  );
   return { data: poll.data, status: poll.status };
 }
 
