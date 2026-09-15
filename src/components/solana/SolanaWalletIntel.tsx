@@ -9,6 +9,7 @@ import { PanelHeader, StatStrip, StateBlock } from "@/components/kit/Kit";
 import { LiveStatusBadge } from "@/components/ui/LiveStatus";
 import { fmtUsd, fmtNum, fmtAmount, fmtPct, shortHash, timeAgo, changeTone } from "@/lib/format";
 import { useAgentPageContext } from "@/components/agent/AgentContext";
+import { NetworkIcon } from "@/components/ui/NetworkIcon";
 
 /**
  * ============================================================
@@ -47,7 +48,12 @@ export function SolanaWalletIntel({ address }: { address: string }) {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-semibold">Wallet Intelligence</h1>
-            <Tag>Solana</Tag>
+            <Tag>
+              <span className="inline-flex items-center gap-1.5">
+                <NetworkIcon id="solana" size={12} />
+                Solana
+              </span>
+            </Tag>
           </div>
           <div className="mt-1 flex flex-wrap items-center gap-2">
             <code className="tnum break-all text-[12px] text-muted">{address}</code>

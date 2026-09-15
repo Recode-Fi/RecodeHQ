@@ -2,8 +2,8 @@
 
 RECODE is an intelligence platform for tokenized assets and on-chain markets —
 discovery, screening, scanning, wallet intelligence, signals and monitoring for
-RWAs across **Robinhood Chain** and the **STONK ecosystem**, architected for
-additional EVM networks.
+RWAs across **Robinhood Chain** and **Solana**, architected for additional
+EVM and non-EVM networks.
 
 **Modules:** RECODE Radar · RECODE Screen · RECODE Scan · RECODE Intelligence ·
 RECODE Signals · RECODE Forecast · RECODE Portfolio.
@@ -42,10 +42,9 @@ providers: DexScreener (keyless DEX market data) · Solana JSON-RPC (mainnet-bet
   candles (60s, lazy), transactions (5s), whales (10s), holders (5m), prune (30m).
   Durable JSON cache in `.recode-cache/` (gitignored). Disable with `RECODE_SYNC_DISABLE=1`.
 - **Chain abstraction** (`src/chains/`) — `solana` (live, non-EVM), `robinhood` (live,
-  chain 4663), `stonk` (ecosystem integration layer, not a blockchain), `shared` taxonomy.
-  Networks register in `src/chains/registry.ts` (each declares its address `family`:
-  `evm` | `solana`); the network selector and every page adapt automatically. No
-  chain-specific logic in the UI.
+  chain 4663), `shared` taxonomy. Networks register in `src/chains/registry.ts` (each
+  declares its address `family`: `evm` | `solana`, plus the official brand icon); the
+  network selector and every page adapt automatically. No chain-specific logic in the UI.
 - **Wallet** (`src/providers/wallet-provider.tsx`) — raw EIP-1193 (`window.ethereum`):
   connect, chain verification (0x1237). Read-only; RECODE never signs or sends.
   **Solana wallets** (`src/providers/solana-wallet-provider.tsx`) — separate raw provider
@@ -79,7 +78,6 @@ providers: DexScreener (keyless DEX market data) · Solana JSON-RPC (mainnet-bet
 | `/portfolio` | Connected-wallet portfolio (read-only) |
 | `/smart-money` | Wallet net-flow ranking from verified flows |
 | `/whales` | Whale activity feed (buy/sell/transfer/accumulation/distribution) |
-| `/stonk` | STONK ecosystem intelligence (honest pre-wiring states) |
 | `/alerts` | Local alert engine (price/volume/liquidity conditions) |
 | `/scanner` | RECODE Scan (contract scanner) — verification, ownership, risk verdict |
 | `/explorer` | Live transaction tape |
@@ -105,9 +103,8 @@ providers: DexScreener (keyless DEX market data) · Solana JSON-RPC (mainnet-bet
 RECODE **never fabricates** prices, market caps, volumes, liquidity, TVL, holder
 counts, balances, whale events, PnL or risk verdicts. Without a verified source a
 surface renders **"Data unavailable"**, **"Awaiting data"** or **"Syncing"** — never
-`$0`, never simulated numbers. The STONK page activates only from verified contracts
-and providers. Wallet behavioral labels and the contract risk verdict are rule-based
-over verified evidence and expose UNKNOWN/insufficient-data as first-class outcomes.
+`$0`, never simulated numbers. Wallet behavioral labels and the contract risk verdict are
+rule-based over verified evidence and expose UNKNOWN/insufficient-data as first-class outcomes.
 
 ## Brand
 

@@ -17,6 +17,7 @@ import { Panel, Tag } from "@/components/ui/primitives";
 import { CopyButton } from "@/components/ui/states";
 import { PanelHeader } from "@/components/kit/Kit";
 import { fmtUsd, fmtNum, fmtPrice, fmtPct, shortHash, timeAgo } from "@/lib/format";
+import { NetworkIcon } from "@/components/ui/NetworkIcon";
 import { useAgentPageContext } from "@/components/agent/AgentContext";
 
 /** Large-holder threshold (verified portfolio value across priced assets). */
@@ -202,7 +203,10 @@ function WalletWorkspace({
     <>
       <header className="mb-4">
         <div className="mb-1.5 flex flex-wrap items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-green/80">
-          WALLET INTELLIGENCE · ROBINHOOD CHAIN (4663)
+          <span className="inline-flex items-center gap-1.5">
+            <NetworkIcon id="robinhood-chain" size={13} />
+            WALLET INTELLIGENCE · ROBINHOOD CHAIN (4663)
+          </span>
           {isWhale ? (
             <Tag tone="pos">Large holder · ≥ {fmtUsd(WHALE_THRESHOLD_USD)} verified portfolio</Tag>
           ) : null}

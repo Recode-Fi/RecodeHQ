@@ -11,6 +11,7 @@ import { AssetLogo } from "@/components/ui/AssetLogo";
 import { LiveStatusBadge } from "@/components/ui/LiveStatus";
 import { changeTone, fmtPct, fmtUsd, timeAgo } from "@/lib/format";
 import { useAgentPageContext } from "@/components/agent/AgentContext";
+import { NetworkIcon } from "@/components/ui/NetworkIcon";
 
 /**
  * ============================================================
@@ -71,7 +72,10 @@ export function SolanaRadar() {
     <div className="mx-auto max-w-[1400px]">
       <header className="mb-4 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold">RECODE Radar · Solana</h1>
+          <h1 className="flex items-center gap-2 text-xl font-semibold">
+            <NetworkIcon id="solana" size={20} />
+            RECODE Radar · Solana
+          </h1>
           <p className="mt-1 max-w-2xl text-[12.5px] text-muted">
             Rule-based detection of significant Solana activity — every signal shows the verified
             numbers it was derived from. Unavailable data produces no signal, never a guess.

@@ -11,7 +11,7 @@ import { LiveStatusBadge, UpdatedAgo } from "@/components/ui/LiveStatus";
 import { Panel, Chip } from "@/components/ui/primitives";
 import { changeTone, fmtPct, fmtUsd, fmtNum, shortHash, timeAgo } from "@/lib/format";
 import { useAgentPageContext } from "@/components/agent/AgentContext";
-import solanaSvg from "@web3icons/core/svgs/tokens/branded/SOL.svg";
+import { NetworkIcon } from "@/components/ui/NetworkIcon";
 
 /**
  * ============================================================
@@ -125,10 +125,7 @@ export function SolanaMarketsTable() {
     <div className="space-y-3">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div className="flex items-center gap-2.5">
-          <span
-            className="[&_svg]:h-[22px] [&_svg]:w-[22px]"
-            dangerouslySetInnerHTML={{ __html: solanaSvg }}
-          />
+          <NetworkIcon id="solana" size={22} />
           <div>
             <h1 className="text-xl font-semibold">Solana Markets</h1>
             <p className="mt-0.5 max-w-2xl text-[12.5px] text-muted">

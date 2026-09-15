@@ -2,7 +2,7 @@
 
 import { useSolanaToken } from "@/hooks/useSolana";
 import { AssetLogo } from "@/components/ui/AssetLogo";
-import solanaSvg from "@web3icons/core/svgs/tokens/branded/SOL.svg";
+import { NetworkIcon } from "@/components/ui/NetworkIcon";
 import { Sparkline } from "@/components/charts/Sparkline";
 import { Panel, Tag, Chip } from "@/components/ui/primitives";
 import { CopyButton } from "@/components/ui/states";
@@ -52,11 +52,12 @@ export function SolanaAssetView({ mint }: { mint: string }) {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-xl font-semibold">{t?.symbol ?? shortHash(mint, 6, 6)}</h1>
-              <Tag> Solana</Tag>
-              <span
-                className="[&_svg]:h-4 [&_svg]:w-4"
-                dangerouslySetInnerHTML={{ __html: solanaSvg }}
-              />
+              <Tag>
+                <span className="inline-flex items-center gap-1.5">
+                  <NetworkIcon id="solana" size={12} />
+                  Solana
+                </span>
+              </Tag>
             </div>
             <p className="mt-0.5 text-[12px] text-muted">{t?.name ?? "Solana token"}</p>
           </div>

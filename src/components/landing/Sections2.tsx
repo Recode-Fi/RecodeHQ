@@ -58,8 +58,8 @@ export function HowItWorksSection() {
 
 const ECOSYSTEMS = [
   { name: "Robinhood Chain", state: "Live intelligence coverage", desc: "Tokenized stocks, ETFs and RWAs indexed from on-chain sources." },
-  { name: "STONK ecosystem", state: "Integration layer", desc: "Ecosystem intelligence on shared tokenized-market infrastructure." },
-  { name: "Future networks", state: "Architecture-ready", desc: "The chain abstraction supports additional EVM ecosystems." },
+  { name: "Solana", state: "Live non-EVM coverage", desc: "DEX market data, whale flows, radar signals and wallet intelligence on mainnet-beta." },
+  { name: "Future networks", state: "Architecture-ready", desc: "The chain abstraction supports additional EVM and non-EVM ecosystems." },
 ];
 
 export function EcosystemsSection() {

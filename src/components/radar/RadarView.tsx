@@ -9,6 +9,7 @@ import { StateBlock } from "@/components/kit/Kit";
 import { AssetLogo } from "@/components/ui/AssetLogo";
 import { changeTone, fmtPct, fmtUsd, fmtNum } from "@/lib/format";
 import { useAgentPageContext } from "@/components/agent/AgentContext";
+import { NetworkIcon } from "@/components/ui/NetworkIcon";
 
 const TFS = ["1H", "4H", "24H", "7D", "30D"] as const;
 const SIGNALS = ["all", "volume", "momentum", "holders", "whales", "new"] as const;
@@ -88,7 +89,10 @@ export function RadarView() {
     <div className="mx-auto max-w-[1400px]">
       <header className="mb-4 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold">RECODE Radar</h1>
+          <h1 className="flex items-center gap-2 text-xl font-semibold">
+            <NetworkIcon id="robinhood-chain" size={20} />
+            RECODE Radar
+          </h1>
           <p className="mt-1 max-w-2xl text-[12.5px] text-muted">
             Every verified tokenized asset positioned by momentum and market size. Horizontal =
             signed 24h momentum. Vertical = verified market cap (log). Brightness = 24h volume.

@@ -8,8 +8,11 @@
  * per-network states from configuration alone.
  */
 
-// Official Solana brand SVG (SOL token mark) from @web3icons/core.
+// Official network brand SVGs from @web3icons/core (raw SVG strings):
+// Solana (SOL token mark) and Robinhood Chain (official Robinhood network
+// icon — the feather mark in chain brand color #CF0).
 import solanaIcon from "@web3icons/core/svgs/tokens/branded/SOL.svg";
+import robinhoodChainIcon from "@web3icons/core/svgs/networks/branded/robinhood.svg";
 
 export interface NetworkConfig {
   id: string;
@@ -43,6 +46,7 @@ export const ROBINHOOD_CHAIN: NetworkConfig = {
   explorerUrl: "https://robinhoodchain.blockscout.com",
   engineChainId: 4663,
   note: "Live EVM network. Indexed via the Robinhood Chain explorer + official stock-token API.",
+  icon: robinhoodChainIcon,
 };
 
 /**
@@ -67,35 +71,12 @@ export const SOLANA: NetworkConfig = {
 };
 
 /**
- * STONK ecosystem — protocol/token integration layer, NOT a blockchain.
- * Data is config-driven until the ecosystem token contract is verified,
- * at which point the engine indexes it like any other market.
- */
-export const STONK_ECOSYSTEM: NetworkConfig = {
-  id: "stonk",
-  name: "STONK Ecosystem",
-  shortName: "STONK",
-  kind: "ecosystem",
-  family: "evm",
-  chainId: null,
-  chainIdHex: null,
-  explorerUrl: null,
-  engineChainId: null,
-  note: "Protocol and token integration layer on Robinhood Chain infrastructure. Not an independent blockchain.",
-};
-
-/**
  * Future EVM chains register here with engineChainId set once their
  * indexer/provider is wired — no UI changes required.
  */
 export const RESERVED_CHAINS: NetworkConfig[] = [];
 
-export const NETWORKS: NetworkConfig[] = [
-  SOLANA,
-  ROBINHOOD_CHAIN,
-  STONK_ECOSYSTEM,
-  ...RESERVED_CHAINS,
-];
+export const NETWORKS: NetworkConfig[] = [SOLANA, ROBINHOOD_CHAIN, ...RESERVED_CHAINS];
 
 /** True when the given network id is a non-EVM family. */
 export function isSolanaNetwork(id: string): boolean {

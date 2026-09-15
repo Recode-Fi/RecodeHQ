@@ -22,8 +22,9 @@ projects from this codebase.
   (once per browser session, Esc to skip).
 
 - Chain abstraction: `src/chains/registry.ts` — Robinhood Chain (live, 4663),
-  STONK ecosystem (integration layer, NOT a blockchain), future EVM chains
-  register there. UI reads network state via `ChainProvider` (`useChain`).
+  Solana (live, non-EVM, family "solana"), future chains register there. UI reads
+  network state via `ChainProvider` (`useChain`); official network logos come from
+  the registry (`icon`) rendered by `src/components/ui/NetworkIcon.tsx`.
 
 - Wallet connection: `src/providers/wallet-provider.tsx` — raw EIP-1193
   (`window.ethereum`), read-only (balances). No wallet SDKs, no signing/sending.

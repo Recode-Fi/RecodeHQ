@@ -9,7 +9,7 @@ import { StateBlock } from "@/components/kit/Kit";
 import { LiveStatusBadge } from "@/components/ui/LiveStatus";
 import { fmtUsd, shortHash, timeAgo } from "@/lib/format";
 import { useAgentPageContext } from "@/components/agent/AgentContext";
-import solanaSvg from "@web3icons/core/svgs/tokens/branded/SOL.svg";
+import { NetworkIcon } from "@/components/ui/NetworkIcon";
 
 const WINDOWS = [
   { id: 24, label: "24H" },
@@ -54,10 +54,7 @@ export function SolanaSmartMoney() {
     <div className="mx-auto max-w-[1100px]">
       <header className="mb-5 flex flex-wrap items-end justify-between gap-3">
         <div className="flex items-center gap-2.5">
-          <span
-            className="[&_svg]:h-[22px] [&_svg]:w-[22px]"
-            dangerouslySetInnerHTML={{ __html: solanaSvg }}
-          />
+          <NetworkIcon id="solana" size={22} />
           <div>
             <h1 className="text-xl font-semibold">Smart Money · Solana</h1>
             <p className="mt-1 max-w-2xl text-[12.5px] text-muted">

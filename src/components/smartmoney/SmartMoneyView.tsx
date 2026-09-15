@@ -7,6 +7,7 @@ import type { LiveWhale } from "@/services/recodeService";
 import { Panel, Chip } from "@/components/ui/primitives";
 import { StateBlock } from "@/components/kit/Kit";
 import { fmtUsd, shortHash, timeAgo } from "@/lib/format";
+import { NetworkIcon } from "@/components/ui/NetworkIcon";
 
 const WINDOWS = ["24H", "7D", "30D", "ALL"] as const;
 
@@ -45,7 +46,10 @@ export function SmartMoneyView() {
   return (
     <div className="mx-auto max-w-[1100px]">
       <header className="mb-5">
-        <h1 className="text-xl font-semibold">Smart Money</h1>
+        <h1 className="flex items-center gap-2 text-xl font-semibold">
+          <NetworkIcon id="robinhood-chain" size={20} />
+          Smart Money
+        </h1>
         <p className="mt-1 max-w-2xl text-[12.5px] text-muted">
           Wallets ranked by verified net on-chain flow in tokenized assets. RECODE does not label
           opaque "smart money" — ranking reflects measured flows only. ROI / win-rate columns

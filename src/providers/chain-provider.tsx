@@ -23,7 +23,7 @@ interface ChainContextValue {
   selectedLabel: string;
   /** Networks rendered as selectable options in the UI. */
   runtimes: ChainRuntime[];
-  /** True when the current filter excludes EVM engine data (e.g. STONK pre-wiring). */
+  /** True when the current filter excludes EVM engine data (e.g. a registered-but-not-yet-indexed network). */
   filterExcludesData: boolean;
   /** True when the selected network is the Solana (non-EVM) family. */
   isSolana: boolean;

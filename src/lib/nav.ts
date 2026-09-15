@@ -33,7 +33,6 @@ export const NAV_SECTIONS: NavSection[] = [
       { label: "Wallet Intelligence", href: "/app/wallets" },
       { label: "Smart Money", href: "/app/smart-money" },
       { label: "Whale Activity", href: "/app/whales" },
-      { label: "STONK", href: "/app/stonk" },
     ],
   },
   {

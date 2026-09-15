@@ -23,5 +23,13 @@ export function MarketsView({
 }) {
   const { isSolana } = useChain();
   if (isSolana) return <SolanaMarketsTable />;
-  return <MarketsTable title={title} sub={sub} assetType={assetType} showFilters={showFilters} />;
+  return (
+    <MarketsTable
+      title={title}
+      sub={sub}
+      assetType={assetType}
+      showFilters={showFilters}
+      networkId="robinhood-chain"
+    />
+  );
 }

@@ -10,6 +10,7 @@ import { StateBlock, PanelHeader } from "@/components/kit/Kit";
 import { LiveStatusBadge, UpdatedAgo } from "@/components/ui/LiveStatus";
 import { Panel, Chip } from "@/components/ui/primitives";
 import { changeTone, fmtPct, fmtUsd, fmtNum, shortHash, timeAgo } from "@/lib/format";
+import { NetworkIcon } from "@/components/ui/NetworkIcon";
 import { useAgentPageContext } from "@/components/agent/AgentContext";
 
 const TYPE_FILTERS: { id: string; label: string }[] = [
@@ -29,11 +30,14 @@ export function MarketsTable({
   sub,
   assetType,
   showFilters = true,
+  networkId,
 }: {
   title: string;
   sub?: string;
   assetType?: string;
   showFilters?: boolean;
+  /** Registry network id — renders the official chain logo next to the title. */
+  networkId?: string;
 }) {
   const markets = useLiveMarkets("24H");
   const [type, setType] = useState("all");
@@ -132,6 +136,7 @@ export function MarketsTable({
       <PanelHeader title={title} sub={sub} />
       {/* LIVE / CONNECTING / SYNCING / STALE / ERROR + honest quote age */}
       <div className="mb-2 flex flex-wrap items-center gap-2.5">
+        {networkId ? <NetworkIcon id={networkId} size={16} /> : null}
         <LiveStatusBadge status={markets.status} />
         <UpdatedAgo ts={newestQuote} prefix="Last quote" />
         <span className="text-[10.5px] text-faint">

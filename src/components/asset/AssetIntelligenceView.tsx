@@ -16,6 +16,7 @@ import { AssetLogo } from "@/components/ui/AssetLogo";
 import { PriceChart } from "@/components/charts/PriceChart";
 import { Sparkline } from "@/components/charts/Sparkline";
 import { Panel, Tag, Chip } from "@/components/ui/primitives";
+import { NetworkIcon } from "@/components/ui/NetworkIcon";
 import { WhaleIntelPanel } from "@/components/whales/WhaleIntelPanel";
 import { CopyButton } from "@/components/ui/states";
 import { PanelHeader } from "@/components/kit/Kit";
@@ -377,7 +378,12 @@ function Workspace({
               <h1 className="text-[22px] font-semibold tracking-[-0.01em]">{row.symbol}</h1>
               <Tag tone="green">{row.assetType}</Tag>
               {row.verified ? <Tag tone="pos">Verified</Tag> : null}
-              <Tag>Robinhood Chain</Tag>
+              <Tag>
+                <span className="inline-flex items-center gap-1.5">
+                  <NetworkIcon id="robinhood-chain" size={12} />
+                  Robinhood Chain
+                </span>
+              </Tag>
               <span
                 className={`flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider ${
                   freshness.live ? "text-green" : "text-muted"

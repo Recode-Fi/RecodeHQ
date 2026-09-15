@@ -6,6 +6,7 @@ import type { ScanResult } from "@/server/sync/services/scanService";
 import { Panel, Tag } from "@/components/ui/primitives";
 import { LiveStatusBadge, UpdatedAgo } from "@/components/ui/LiveStatus";
 import { fmtNum, fmtUsd, fmtPct, fmtDate, fmtPrice, shortHash, timeAgo } from "@/lib/format";
+import { NetworkIcon } from "@/components/ui/NetworkIcon";
 import { useAgentPageContext } from "@/components/agent/AgentContext";
 
 const RISK_TONE = { LOW: "pos", MEDIUM: "warn", HIGH: "neg", UNKNOWN: "neutral" } as const;
@@ -157,7 +158,10 @@ export function ScannerView({ initial }: { initial?: string }) {
             {/* LIVE NETWORK STATUS — same LiveStatus components as the rest of RECODE */}
             <div className="mb-4 flex flex-wrap items-center gap-3 rounded-[6px] border border-line bg-panel px-4 py-2.5 text-[11.5px]">
               <LiveStatusBadge status={d.network.online ? (scan.status === "stale" ? "stale" : "live") : "unavailable"} />
-              <span className="font-medium">Robinhood Chain</span>
+              <span className="flex items-center gap-1.5 font-medium">
+                <NetworkIcon id="robinhood-chain" size={14} />
+                Robinhood Chain
+              </span>
               <span className="text-line">|</span>
               <span className="tnum text-muted">
                 Block {d.network.blockNumber != null ? fmtNum(d.network.blockNumber) : "—"}

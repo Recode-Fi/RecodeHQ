@@ -11,6 +11,7 @@ import { WhaleIntelPanel } from "@/components/whales/WhaleIntelPanel";
 import { CopyButton } from "@/components/ui/states";
 import { UpdatedAgo, LiveStatusBadge } from "@/components/ui/LiveStatus";
 import { PanelHeader } from "@/components/kit/Kit";
+import { NetworkIcon } from "@/components/ui/NetworkIcon";
 import { sessionLabel } from "@/lib/tradingSession";
 import { useAgentPageContext } from "@/components/agent/AgentContext";
 import {
@@ -119,7 +120,12 @@ export function AssetView({ symbol }: { symbol: string }) {
               <h1 className="text-[22px] font-semibold tracking-[-0.01em]">{row.symbol}</h1>
               <Tag tone="green">{row.assetType}</Tag>
               {row.verified ? <Tag tone="pos">Verified</Tag> : null}
-              <Tag>Robinhood Chain</Tag>
+              <Tag>
+                <span className="inline-flex items-center gap-1.5">
+                  <NetworkIcon id="robinhood-chain" size={12} />
+                  Robinhood Chain
+                </span>
+              </Tag>
               {tradingStatus ? (
                 <Tag tone={tradingStatus === "HALTED" ? "neg" : tradingStatus === "CLOSED" ? "neutral" : "pos"}>
                   {tradingStatus}
