@@ -119,8 +119,11 @@ export class SolanaRpcProvider {
     return r?.value != null ? r.value / SOL_LAMPORTS : null;
   }
 
-  /** SPL token accounts of a wallet (jsonParsed). */
-  async getTokenAccounts(address: string): Promise<RpcParsedTokenAccount[]> {
+  /** SPL token accounts of a wallet (jsonParsed) for the given program. */
+  async getTokenAccounts(
+    address: string,
+    programId: string = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+  ): Promise<RpcParsedTokenAccount[]> {
     const r = await this.call<{
       value: {
         pubkey: string;
@@ -138,7 +141,7 @@ export class SolanaRpcProvider {
       }[];
     }>("getTokenAccountsByOwner", [
       address,
-      { programId: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" },
+      { programId },
       { encoding: "jsonParsed" },
     ]);
     return (r?.value ?? []).map((v) => ({
@@ -202,11 +205,64 @@ export class SolanaRpcProvider {
   }
 
   /** Recent signature activity for any address (wallet or mint). */
-  async getSignatures(address: string, limit = 25): Promise<RpcSignature[] | null> {
+  async getSignatures(
+    address: string,
+    limit = 25,
+    before?: string | null,
+  ): Promise<RpcSignature[] | null> {
+    const params: Record<string, unknown> = { limit: Math.max(1, Math.min(100, limit)) };
+    if (before) params.before = before;
     const r = await this.call<
       { signature: string; blockTime: number | null; err: unknown }[]
-    >("getSignaturesForAddress", [address, { limit: Math.max(1, Math.min(100, limit)) }]);
+    >("getSignaturesForAddress", [address, params]);
     if (!r) return null;
     return r.map((s) => ({ signature: s.signature, blockTime: s.blockTime, err: s.err }));
+  }
+
+  /**
+   * One confirmed transaction, jsonParsed (maxSupportedTransactionVersion 0
+   * so versioned transactions are included). Returns null when the RPC is
+   * unavailable/rate-limited or the tx is not found — the caller records
+   * "details unavailable" instead of fabricating content.
+   */
+  async getTransaction(
+    signature: string,
+  ): Promise<
+    | {
+        blockTime: number | null;
+        meta: {
+          err: unknown | null;
+          fee: number;
+          preBalances: number[];
+          postBalances: number[];
+          preTokenBalances: {
+            accountIndex: number;
+            mint: string;
+            owner: string | null;
+            uiTokenAmount: { uiAmount: number | null; decimals: number | null };
+          }[];
+          postTokenBalances: {
+            accountIndex: number;
+            mint: string;
+            owner: string | null;
+            uiTokenAmount: { uiAmount: number | null; decimals: number | null };
+          }[];
+        } | null;
+        transaction: {
+          message: {
+            accountKeys: { pubkey: string; signer: boolean; writable: boolean; source?: string }[];
+            instructions: {
+              program?: string;
+              programId?: string;
+              parsed?: { type?: string; info?: Record<string, unknown> };
+            }[];
+          };
+        };
+      } | null
+    > {
+    return this.call("getTransaction", [
+      signature,
+      { encoding: "jsonParsed", maxSupportedTransactionVersion: 0, commitment: "confirmed" },
+    ]);
   }
 }

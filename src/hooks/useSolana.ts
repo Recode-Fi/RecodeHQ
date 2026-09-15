@@ -10,7 +10,8 @@ import {
   type SolanaScanRow,
   type SolanaSmartMoneyWallet,
   type SolanaTokenIntel,
-  type SolanaWalletActivity,
+  type SolanaWalletActivityPage,
+  type SolanaWalletActivityRecord,
   type SolanaWalletBalances,
   type SolanaWhaleEvent,
 } from "@/services/solanaService";
@@ -205,12 +206,81 @@ export function useSolanaWalletBalances(
   return { data: poll.data, status: poll.status };
 }
 
-export function useSolanaWalletActivity(
-  address: string,
-): { data: SolanaWalletActivity | null; status: string } {
-  const poll = useSyncPolling<SolanaWalletActivity>(
-    `/api/solana/wallet/activity?address=${encodeURIComponent(address)}`,
-    30_000,
-  );
-  return { data: poll.data, status: poll.status };
+export function useSolanaWalletActivityFeed(address: string): {
+  pages: SolanaWalletActivityPage[];
+  records: SolanaWalletActivityRecord[];
+  status: string;
+  error: string | null;
+  loadingMore: boolean;
+  hasMore: boolean;
+  /** Cursor for the next older page. */
+  nextBefore: string | null;
+  loadMore: () => void;
+  refresh: () => void;
+} {
+  const [pages, setPages] = useState<SolanaWalletActivityPage[]>([]);
+  const [status, setStatus] = useState<string>("connecting");
+  const [error, setError] = useState<string | null>(null);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [reloadTick, setReloadTick] = useState(0);
+
+  useEffect(() => {
+    let alive = true;
+    setPages([]);
+    setStatus("connecting");
+    setError(null);
+    (async () => {
+      const res = await solanaService.walletActivity(address, null, 25);
+      if (!alive) return;
+      if (res.status === "unavailable" || res.status === "error") {
+        setStatus("unavailable");
+        setError(res.error ?? "Wallet activity unavailable");
+        return;
+      }
+      setPages(res.data ? [res.data] : []);
+      setStatus("live");
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [address, reloadTick]);
+
+  const loadMore = useCallback(async () => {
+    const last = pages[pages.length - 1];
+    if (!last?.nextBefore || loadingMore) return;
+    setLoadingMore(true);
+    try {
+      const res = await solanaService.walletActivity(address, last.nextBefore, 25);
+      if (res.data) setPages((prev) => [...prev, res.data as SolanaWalletActivityPage]);
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [address, pages, loadingMore]);
+
+  // Dedupe by signature across accumulated pages (real data, no repeats).
+  const records = useMemo(() => {
+    const seen = new Set<string>();
+    const out: SolanaWalletActivityRecord[] = [];
+    for (const page of pages) {
+      for (const r of page.records) {
+        if (seen.has(r.signature)) continue;
+        seen.add(r.signature);
+        out.push(r);
+      }
+    }
+    return out;
+  }, [pages]);
+
+  const refresh = useCallback(() => setReloadTick((t) => t + 1), []);
+  return {
+    pages,
+    records,
+    status,
+    error,
+    loadingMore,
+    hasMore: pages[pages.length - 1]?.hasMore ?? false,
+    nextBefore: pages[pages.length - 1]?.nextBefore ?? null,
+    loadMore: () => void loadMore(),
+    refresh,
+  };
 }

@@ -1,5 +1,6 @@
 import type { LiveSolanaRow, SolanaEngineStatus, SolanaRadarSignal, SolanaToken, SolanaWhaleEvent } from "@/server/solana/types";
-import type { SolanaWalletActivity, SolanaWalletBalances } from "@/server/solana/services/walletIntel";
+import type { SolanaWalletBalances } from "@/server/solana/services/walletIntel";
+import type { WalletActivityPage as SolanaWalletActivityPage, WalletActivityRecord as SolanaWalletActivityRecord } from "@/server/solana/services/walletActivity";
 
 /**
  * ============================================================
@@ -141,10 +142,14 @@ export const solanaService = {
     );
   },
 
-  walletActivity(address: string): Promise<SolanaEnvelope<SolanaWalletActivity>> {
-    return getJson<SolanaWalletActivity>(
-      `/api/solana/wallet/activity?address=${encodeURIComponent(address)}`,
-    );
+  walletActivity(
+    address: string,
+    before?: string | null,
+    limit = 25,
+  ): Promise<SolanaEnvelope<SolanaWalletActivityPage>> {
+    const params = new URLSearchParams({ address, limit: String(limit) });
+    if (before) params.set("before", before);
+    return getJson<SolanaWalletActivityPage>(`/api/solana/wallet/activity?${params.toString()}`);
   },
 };
 
@@ -153,7 +158,8 @@ export type {
   SolanaEngineStatus,
   SolanaRadarSignal,
   SolanaToken,
-  SolanaWhaleEvent,
-  SolanaWalletActivity,
+  SolanaWalletActivityPage,
+  SolanaWalletActivityRecord,
   SolanaWalletBalances,
+  SolanaWhaleEvent,
 };

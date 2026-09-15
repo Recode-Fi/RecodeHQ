@@ -21,10 +21,7 @@ export async function GET(request: Request) {
     );
   }
   try {
-    const data = await fetchSolanaWalletBalances(
-      getSolanaSyncEngine().rpc,
-      address,
-    );
+    const data = await fetchSolanaWalletBalances(getSolanaSyncEngine().rpc, getSolanaSyncEngine(), address);
     return NextResponse.json({
       status: data.chainOnline ? "live" : "unavailable",
       data,
@@ -36,3 +33,4 @@ export async function GET(request: Request) {
     });
   }
 }
+

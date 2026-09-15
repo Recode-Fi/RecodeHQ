@@ -1,15 +1,16 @@
 import { NextResponse } from "next/server";
 import { getSolanaSyncEngine } from "@/server/solana/engine";
-import { fetchSolanaWalletActivity } from "@/server/solana/services/walletIntel";
+import { fetchSolanaWalletActivityPage } from "@/server/solana/services/walletIntel";
 import { isValidSolanaAddress } from "@/lib/base58";
 
 export const dynamic = "force-dynamic";
 
 /**
- * Solana wallet activity — real signature history from the chain
- * (signature, block timestamp, status). No transfer direction is
- * invented: un-interpreted signature records are the honest unit
- * of activity without a dedicated indexer.
+ * Solana wallet activity — REAL normalized transaction records
+ * (signature → parsed transaction → classified record with SOL/token
+ * amounts, program, counterparty, USD where verified). Pagination via
+ * the `before` signature cursor; `limit` bounded (max 50). No browser-
+ * side transaction parsing is needed.
  */
 export async function GET(request: Request) {
   getSolanaSyncEngine().ensureStarted();
@@ -21,11 +22,18 @@ export async function GET(request: Request) {
       { status: 400 },
     );
   }
+  const limitParam = Number(url.searchParams.get("limit"));
+  const limit = Number.isFinite(limitParam) && limitParam > 0 && limitParam <= 50 ? limitParam : 25;
+  const before = url.searchParams.get("before")?.trim() || null;
   try {
-    const data = await fetchSolanaWalletActivity(getSolanaSyncEngine().rpc, address);
+    const data = await fetchSolanaWalletActivityPage(getSolanaSyncEngine().rpc, address, {
+      limit,
+      before,
+    });
     return NextResponse.json({
-      status: data.available ? "live" : "unavailable",
+      status: data.chainOnline ? "live" : "unavailable",
       data,
+      ...(data.chainOnline ? {} : { error: data.errors[0] }),
     });
   } catch (err) {
     return NextResponse.json({

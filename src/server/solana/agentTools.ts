@@ -233,9 +233,12 @@ const getSolanaWalletIntel: ToolDef = {
     const { fetchSolanaWalletBalances, fetchSolanaWalletActivity } =
       await import("./services/walletIntel");
     const [balances, activity] = await Promise.all([
-      fetchSolanaWalletBalances(getSolanaSyncEngine().rpc, a),
-      fetchSolanaWalletActivity(getSolanaSyncEngine().rpc, a).catch(() => null),
+      fetchSolanaWalletBalances(getSolanaSyncEngine().rpc, getSolanaSyncEngine(), a),
+      fetchSolanaWalletActivity(getSolanaSyncEngine().rpc, getSolanaSyncEngine(), a).catch(
+        () => null,
+      ),
     ]);
+    const swapCount = activity?.records.filter((r) => r.action === "swap").length ?? null;
     return {
       provenance: balances.chainOnline ? "LIVE" : "UNAVAILABLE",
       chain: "solana",
@@ -245,7 +248,7 @@ const getSolanaWalletIntel: ToolDef = {
       totalValueUsd: balances.totalValueUsd != null ? round(balances.totalValueUsd) : null,
       valueBasis:
         balances.pricedCount > 0
-          ? "sum of holdings × verified engine prices (unpriced tokens excluded)"
+          ? "sum of holdings × verified exact-mint prices (unpriced tokens excluded)"
           : null,
       errors: balances.errors,
       holdings: balances.holdings.map((h) => ({
@@ -256,22 +259,32 @@ const getSolanaWalletIntel: ToolDef = {
         priceUsd: h.priceUsd != null ? round(h.priceUsd, 8) : null,
         valueUsd: h.valueUsd != null ? round(h.valueUsd) : null,
         change24hPct: h.change24hPct != null ? round(h.change24hPct) : null,
+        status: h.status,
       })),
       activity: activity
         ? {
-            available: activity.available,
-            recentCount: activity.signatures.length,
-            firstSeen: activity.firstSeen,
-            recentSignatures: activity.signatures.slice(0, 10).map((s) => ({
-              signature: s.signature,
-              ts: s.ts,
-              failed: s.failed,
+            available: activity.recordsCount > 0 || activity.signaturesCount > 0,
+            recordCount: activity.recordsCount,
+            signaturesCount: activity.signaturesCount,
+            detailsUnavailable: activity.detailsUnavailable,
+            firstSeen: activity.oldestTs,
+            swaps: swapCount,
+            recent: activity.records.slice(0, 10).map((r) => ({
+              action: r.action,
+              label: r.label,
+              ts: r.ts,
+              program: r.program,
+              solAmount: r.solAmount != null ? round(r.solAmount, 6) : null,
+              tokenSymbol: r.tokenSymbol,
+              tokenAmount: r.tokenAmount,
+              usd: r.usd != null ? round(r.usd) : null,
+              signature: r.signature,
             })),
           }
         : null,
       note:
-        balances.holdings.filter((h) => h.priceUsd == null).length > 0
-          ? "Some holdings have no verified market price — their USD value is unavailable (not zero)."
+        balances.unpricedCount > 0
+          ? `${balances.unpricedCount} holding(s) have no verified exact-mint market — USD value unavailable (not zero).`
           : null,
     };
   },
