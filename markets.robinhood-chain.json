@@ -1,0 +1,406 @@
+{
+    "chainId":  4663,
+    "note":  "Verified Robinhood Chain token registry - seeded from prior verified indexing. Facts only (address, symbol, name, asset type, underlying); all live metrics come from providers at runtime.",
+    "markets":  [
+                    {
+                        "address":  "0x117cc2133c37b721f49de2a7a74833232b3b4c0c",
+                        "symbol":  "SPY",
+                        "name":  "SPDR S\u0026P 500 ETF Trust • Robinhood Token",
+                        "assetType":  "etf",
+                        "underlying":  "SPDR S\u0026P 500 ETF Trust",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0xd0601ce157db5bdc3162bbac2a2c8af5320d9eec",
+                        "symbol":  "NVDA",
+                        "name":  "NVIDIA • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "NVIDIA",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0x4a0e65a3eccec6dbe60ae065f2e7bb85fae35eea",
+                        "symbol":  "SPCX",
+                        "name":  "Space Exploration Technologies Corp • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Space Exploration Technologies Corp",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0x05a3d1cd21d0c88145e82600e62e7e496e0f222b",
+                        "symbol":  "AMC",
+                        "name":  "AMC Entertainment Holdings, Inc. • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "AMC Entertainment Holdings, Inc.",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0xc9a981fee1f9dec688bb123ccdecc63d0debfc4e",
+                        "symbol":  "GLD",
+                        "name":  "SPDR Gold Shares • Robinhood Token",
+                        "assetType":  "commodity",
+                        "underlying":  "SPDR Gold Shares",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0xaf3d76f1834a1d425780943c99ea8a608f8a93f9",
+                        "symbol":  "AAPL",
+                        "name":  "Apple • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Apple",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0x322f0929c4625ed5bad873c95208d54e1c003b2d",
+                        "symbol":  "TSLA",
+                        "name":  "Tesla • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Tesla",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0x1b0e319c6a659f002271b69db8a7df2f911c153e",
+                        "symbol":  "GME",
+                        "name":  "GameStop • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "GameStop",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0x8005d266423c7ea827372c9c864491e5786600ea",
+                        "symbol":  "LLY",
+                        "name":  "Eli Lilly • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Eli Lilly",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0xd5f3879160bc7c32ebb4dc785f8a4f505888de68",
+                        "symbol":  "QQQ",
+                        "name":  "Invesco QQQ • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Invesco QQQ",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0xccee82fe024c36fa15e1005ede3e9e4787e23d09",
+                        "symbol":  "HIMS",
+                        "name":  "Hims \u0026 Hers Health, Inc. • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Hims \u0026 Hers Health, Inc.",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0x1d11f0496982706c5e14a514d4e79f2e6bde4516",
+                        "symbol":  "DJT",
+                        "name":  "Trump Media \u0026 Technology Group Corp. • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Trump Media \u0026 Technology Group Corp.",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0x2e0847e8910a9732eb3fb1bb4b70a580adad4fe3",
+                        "symbol":  "GOOGL",
+                        "name":  "Alphabet Class A • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Alphabet Class A",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0x12f190a9f9d7d37a250758b26824b97ce941bf54",
+                        "symbol":  "AMZN",
+                        "name":  "Amazon • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Amazon",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0xe93237c50d904957cf27e7b1133b510c669c2e74",
+                        "symbol":  "MSFT",
+                        "name":  "Microsoft • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Microsoft",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0xec262a75e413fafd0df80480274532c79d42da09",
+                        "symbol":  "MSTR",
+                        "name":  "Strategy Inc. • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Strategy Inc.",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0x92fd66527192e3e61d4ddd13322aa222de86f9b5",
+                        "symbol":  "SGOV",
+                        "name":  "iShares 0-3 Month Treasury Bond ETF • Robinhood Token",
+                        "assetType":  "treasury",
+                        "underlying":  "iShares 0-3 Month Treasury Bond ETF",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0xdf0992e440dd0be65bd8439b609d6d4366bf1cb5",
+                        "symbol":  "CRCL",
+                        "name":  "Circle Internet Group • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Circle Internet Group",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0x05b37fb53a299a1b874a619e1c4c404d52c36f4c",
+                        "symbol":  "RDDT",
+                        "name":  "Reddit • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Reddit",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0x86923f96303d656e4aa86d9d42d1e57ad2023fdc",
+                        "symbol":  "AMD",
+                        "name":  "AMD • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "AMD",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0x894e1ec2d74ffe5aef8dc8a9e84686accb964f2a",
+                        "symbol":  "PLTR",
+                        "name":  "Palantir Technologies • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Palantir Technologies",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0x5e81213613b6b86eab4c6c50d718d34359459786",
+                        "symbol":  "TTWO",
+                        "name":  "Take-Two Interactive Software • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Take-Two Interactive Software",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0xb90a19ff0af67f7779aff50a882a9cff42446400",
+                        "symbol":  "SNDK",
+                        "name":  "Sandisk Corporation • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Sandisk Corporation",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0xc0d6457c16cc70d6790dd43521c899c87ce02f35",
+                        "symbol":  "META",
+                        "name":  "Meta Platforms • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Meta Platforms",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0x4ea005168d7f09a7a0ba9d1def21a479950e44c2",
+                        "symbol":  "COST",
+                        "name":  "Costco • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Costco",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0x6330d8c3178a418788df01a47479c0ce7ccf450b",
+                        "symbol":  "COIN",
+                        "name":  "Coinbase • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Coinbase",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0xf6589f11bc40b669e584073f428b05562f568733",
+                        "symbol":  "SNAP",
+                        "name":  "Snap Inc. • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Snap Inc.",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0xa30fa36db767ad9ed3f7a60fc79526fb4d56d344",
+                        "symbol":  "USO",
+                        "name":  "United States Oil Fund • Robinhood Token",
+                        "assetType":  "etf",
+                        "underlying":  "United States Oil Fund",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0x58ffe4a942d3885baa22d7520691f611ef09e7aa",
+                        "symbol":  "TSM",
+                        "name":  "Taiwan Semiconductor Manufacturing • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Taiwan Semiconductor Manufacturing",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0xc72b96e0e48ecd4dc75e1e45396e26300bc39681",
+                        "symbol":  "INTC",
+                        "name":  "Intel • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Intel",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0x411efb0e7f985935daec3d4c3ebaea0d0ad7d89f",
+                        "symbol":  "SLV",
+                        "name":  "iShares Silver Trust • Robinhood Token",
+                        "assetType":  "commodity",
+                        "underlying":  "iShares Silver Trust",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0x4e62068525ab11fe768e29dfd00ef909b9803016",
+                        "symbol":  "LULU",
+                        "name":  "Lululemon • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Lululemon",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0x822cc93ffd030293e9842c30bbd678f530701867",
+                        "symbol":  "BE",
+                        "name":  "Bloom Energy • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Bloom Energy",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0xe0444ef8bf4ed74f74fd73686e2ddf4c1c5591e8",
+                        "symbol":  "NFLX",
+                        "name":  "Netflix • Robinhood Token",
+                        "assetType":  "etf",
+                        "underlying":  "Netflix",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0xad25ac6c84d497db898fa1e8387bf6af3532a1c4",
+                        "symbol":  "BABA",
+                        "name":  "Alibaba • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Alibaba",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0xf0c4bf4c582cb3836e98394b1d4e7b7281101be8",
+                        "symbol":  "RBLX",
+                        "name":  "Roblox • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Roblox",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0x84cab63bc87912e71ad199ff14a0ba45de68fef8",
+                        "symbol":  "SKYHY",
+                        "name":  "SK Hynix • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "SK Hynix",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0x43b07d15ce533bec5476d70c22a78a1b2b662155",
+                        "symbol":  "MRNA",
+                        "name":  "Moderna, Inc. • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Moderna, Inc.",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0xd917b029c761d264c6a312bbbcda868658ef86a6",
+                        "symbol":  "USAR",
+                        "name":  "USA Rare Earth • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "USA Rare Earth",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0xb0992820e760d836549ba69bc7598b4af75dee03",
+                        "symbol":  "ORCL",
+                        "name":  "Oracle • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Oracle",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0xff080c8ce2e5feadaca0da81314ae59d232d4afd",
+                        "symbol":  "MU",
+                        "name":  "Micron Technology • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Micron Technology",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0x7f0abef0c07280f82c6a08ead09ded6bae2c13fc",
+                        "symbol":  "EWY",
+                        "name":  "iShares MSCI South Korea fund • Robinhood Token",
+                        "assetType":  "etf",
+                        "underlying":  "iShares MSCI South Korea fund",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0x5f10a1c971b69e47e059e1dc91901b59b3fb49c3",
+                        "symbol":  "CRWV",
+                        "name":  "CoreWeave • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "CoreWeave",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0x48e39e56acdba37b09020c0b734a613c9a2f100a",
+                        "symbol":  "BB",
+                        "name":  "BlackBerry Limited • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "BlackBerry Limited",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0xb1bf26c1d20ff267a4f93550d1e0d06ac40a114b",
+                        "symbol":  "RIVN",
+                        "name":  "Rivian Automotive • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Rivian Automotive",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0x41f4267525a8aff329540ef24fd83d9044758b33",
+                        "symbol":  "FIG",
+                        "name":  "Figma, Inc. • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Figma, Inc.",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0x980dcf6766fa79f5cf0c4aadb3ab477ff15a9619",
+                        "symbol":  "IBM",
+                        "name":  "International Business Machines Corporation • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "International Business Machines Corporation",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0x941ae714ec6d8130c7b75d67160ca08f1e7d11dd",
+                        "symbol":  "DELL",
+                        "name":  "Dell • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Dell",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0x59818904ab4ce163b3ce4ffb64f2d6ca02c434b4",
+                        "symbol":  "QUBT",
+                        "name":  "Quantum Computing • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Quantum Computing",
+                        "verified":  true
+                    },
+                    {
+                        "address":  "0x03dfbbe0ac4e7bcdafd08ed41a400326b77d8c80",
+                        "symbol":  "JNJ",
+                        "name":  "Johnson \u0026 Johnson • Robinhood Token",
+                        "assetType":  "tokenized-stock",
+                        "underlying":  "Johnson \u0026 Johnson",
+                        "verified":  true
+                    }
+                ]
+}

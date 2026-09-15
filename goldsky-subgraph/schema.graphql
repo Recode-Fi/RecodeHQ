@@ -1,0 +1,31 @@
+type Token @entity(immutable: false) {
+  id: ID!
+  symbol: String
+  name: String
+  decimals: BigInt
+  totalSupply: BigInt!
+  holderCount: BigInt!
+  transferCount: BigInt!
+}
+
+type Account @entity(immutable: false) {
+  id: ID!
+}
+
+type TokenBalance @entity(immutable: false) {
+  id: ID!
+  token: Token!
+  account: Account!
+  value: BigInt!
+}
+
+type TransferEvent @entity(immutable: true) {
+  id: ID!
+  token: Token!
+  from: Account!
+  to: Account!
+  value: BigInt!
+  blockNumber: BigInt!
+  timestamp: BigInt!
+  txHash: Bytes!
+}

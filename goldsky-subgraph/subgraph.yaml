@@ -1,0 +1,956 @@
+specVersion: 0.0.8
+description: RECODE — Robinhood Chain ERC-20 holder intelligence (holders, balances, transfers)
+schema:
+  file: ./schema.graphql
+dataSources:
+dataSources:
+  - kind: ethereum
+    name: SPY_117cc2
+    network: robinhood-chain
+    source:
+      address: "0x117cc2133c37b721f49de2a7a74833232b3b4c0c"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: NVDA_d0601c
+    network: robinhood-chain
+    source:
+      address: "0xd0601ce157db5bdc3162bbac2a2c8af5320d9eec"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: SPCX_4a0e65
+    network: robinhood-chain
+    source:
+      address: "0x4a0e65a3eccec6dbe60ae065f2e7bb85fae35eea"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: AMC_05a3d1
+    network: robinhood-chain
+    source:
+      address: "0x05a3d1cd21d0c88145e82600e62e7e496e0f222b"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: GLD_c9a981
+    network: robinhood-chain
+    source:
+      address: "0xc9a981fee1f9dec688bb123ccdecc63d0debfc4e"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: AAPL_af3d76
+    network: robinhood-chain
+    source:
+      address: "0xaf3d76f1834a1d425780943c99ea8a608f8a93f9"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: TSLA_322f09
+    network: robinhood-chain
+    source:
+      address: "0x322f0929c4625ed5bad873c95208d54e1c003b2d"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: GME_1b0e31
+    network: robinhood-chain
+    source:
+      address: "0x1b0e319c6a659f002271b69db8a7df2f911c153e"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: LLY_8005d2
+    network: robinhood-chain
+    source:
+      address: "0x8005d266423c7ea827372c9c864491e5786600ea"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: QQQ_d5f387
+    network: robinhood-chain
+    source:
+      address: "0xd5f3879160bc7c32ebb4dc785f8a4f505888de68"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: HIMS_ccee82
+    network: robinhood-chain
+    source:
+      address: "0xccee82fe024c36fa15e1005ede3e9e4787e23d09"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: DJT_1d11f0
+    network: robinhood-chain
+    source:
+      address: "0x1d11f0496982706c5e14a514d4e79f2e6bde4516"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: GOOGL_2e0847
+    network: robinhood-chain
+    source:
+      address: "0x2e0847e8910a9732eb3fb1bb4b70a580adad4fe3"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: AMZN_12f190
+    network: robinhood-chain
+    source:
+      address: "0x12f190a9f9d7d37a250758b26824b97ce941bf54"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: MSFT_e93237
+    network: robinhood-chain
+    source:
+      address: "0xe93237c50d904957cf27e7b1133b510c669c2e74"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: MSTR_ec262a
+    network: robinhood-chain
+    source:
+      address: "0xec262a75e413fafd0df80480274532c79d42da09"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: SGOV_92fd66
+    network: robinhood-chain
+    source:
+      address: "0x92fd66527192e3e61d4ddd13322aa222de86f9b5"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: CRCL_df0992
+    network: robinhood-chain
+    source:
+      address: "0xdf0992e440dd0be65bd8439b609d6d4366bf1cb5"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: RDDT_05b37f
+    network: robinhood-chain
+    source:
+      address: "0x05b37fb53a299a1b874a619e1c4c404d52c36f4c"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: AMD_86923f
+    network: robinhood-chain
+    source:
+      address: "0x86923f96303d656e4aa86d9d42d1e57ad2023fdc"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: PLTR_894e1e
+    network: robinhood-chain
+    source:
+      address: "0x894e1ec2d74ffe5aef8dc8a9e84686accb964f2a"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: TTWO_5e8121
+    network: robinhood-chain
+    source:
+      address: "0x5e81213613b6b86eab4c6c50d718d34359459786"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: SNDK_b90a19
+    network: robinhood-chain
+    source:
+      address: "0xb90a19ff0af67f7779aff50a882a9cff42446400"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: META_c0d645
+    network: robinhood-chain
+    source:
+      address: "0xc0d6457c16cc70d6790dd43521c899c87ce02f35"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: COST_4ea005
+    network: robinhood-chain
+    source:
+      address: "0x4ea005168d7f09a7a0ba9d1def21a479950e44c2"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: COIN_6330d8
+    network: robinhood-chain
+    source:
+      address: "0x6330d8c3178a418788df01a47479c0ce7ccf450b"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: SNAP_f6589f
+    network: robinhood-chain
+    source:
+      address: "0xf6589f11bc40b669e584073f428b05562f568733"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: USO_a30fa3
+    network: robinhood-chain
+    source:
+      address: "0xa30fa36db767ad9ed3f7a60fc79526fb4d56d344"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: TSM_58ffe4
+    network: robinhood-chain
+    source:
+      address: "0x58ffe4a942d3885baa22d7520691f611ef09e7aa"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: INTC_c72b96
+    network: robinhood-chain
+    source:
+      address: "0xc72b96e0e48ecd4dc75e1e45396e26300bc39681"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: SLV_411efb
+    network: robinhood-chain
+    source:
+      address: "0x411efb0e7f985935daec3d4c3ebaea0d0ad7d89f"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: LULU_4e6206
+    network: robinhood-chain
+    source:
+      address: "0x4e62068525ab11fe768e29dfd00ef909b9803016"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: BE_822cc9
+    network: robinhood-chain
+    source:
+      address: "0x822cc93ffd030293e9842c30bbd678f530701867"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: NFLX_e0444e
+    network: robinhood-chain
+    source:
+      address: "0xe0444ef8bf4ed74f74fd73686e2ddf4c1c5591e8"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: BABA_ad25ac
+    network: robinhood-chain
+    source:
+      address: "0xad25ac6c84d497db898fa1e8387bf6af3532a1c4"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: RBLX_f0c4bf
+    network: robinhood-chain
+    source:
+      address: "0xf0c4bf4c582cb3836e98394b1d4e7b7281101be8"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: SKYHY_84cab6
+    network: robinhood-chain
+    source:
+      address: "0x84cab63bc87912e71ad199ff14a0ba45de68fef8"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: MRNA_43b07d
+    network: robinhood-chain
+    source:
+      address: "0x43b07d15ce533bec5476d70c22a78a1b2b662155"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: USAR_d917b0
+    network: robinhood-chain
+    source:
+      address: "0xd917b029c761d264c6a312bbbcda868658ef86a6"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: ORCL_b09928
+    network: robinhood-chain
+    source:
+      address: "0xb0992820e760d836549ba69bc7598b4af75dee03"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: MU_ff080c
+    network: robinhood-chain
+    source:
+      address: "0xff080c8ce2e5feadaca0da81314ae59d232d4afd"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: EWY_7f0abe
+    network: robinhood-chain
+    source:
+      address: "0x7f0abef0c07280f82c6a08ead09ded6bae2c13fc"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: CRWV_5f10a1
+    network: robinhood-chain
+    source:
+      address: "0x5f10a1c971b69e47e059e1dc91901b59b3fb49c3"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: BB_48e39e
+    network: robinhood-chain
+    source:
+      address: "0x48e39e56acdba37b09020c0b734a613c9a2f100a"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: RIVN_b1bf26
+    network: robinhood-chain
+    source:
+      address: "0xb1bf26c1d20ff267a4f93550d1e0d06ac40a114b"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: FIG_41f426
+    network: robinhood-chain
+    source:
+      address: "0x41f4267525a8aff329540ef24fd83d9044758b33"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: IBM_980dcf
+    network: robinhood-chain
+    source:
+      address: "0x980dcf6766fa79f5cf0c4aadb3ab477ff15a9619"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: DELL_941ae7
+    network: robinhood-chain
+    source:
+      address: "0x941ae714ec6d8130c7b75d67160ca08f1e7d11dd"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: QUBT_598189
+    network: robinhood-chain
+    source:
+      address: "0x59818904ab4ce163b3ce4ffb64f2d6ca02c434b4"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: JNJ_03dfbb
+    network: robinhood-chain
+    source:
+      address: "0x03dfbbe0ac4e7bcdafd08ed41a400326b77d8c80"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts

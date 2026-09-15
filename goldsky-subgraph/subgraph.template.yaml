@@ -1,0 +1,26 @@
+specVersion: 0.0.8
+description: RECODE — Robinhood Chain ERC-20 holder intelligence (holders, balances, transfers)
+schema:
+  file: ./schema.graphql
+dataSources:
+{{#dataSources}}
+  - kind: ethereum
+    name: {{name}}
+    network: robinhood-chain
+    source:
+      address: "{{address}}"
+      abi: ERC20
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities: [Token, Account, TokenBalance, TransferEvent]
+      abis:
+        - name: ERC20
+          file: ./abis/erc20.abi.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
+{{/dataSources}}
