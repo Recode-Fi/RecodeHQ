@@ -74,10 +74,12 @@ export function SolanaWhaleFeed() {
         status={whales.status === "live" ? "live" : whales.status === "unavailable" ? "unavailable" : "syncing"}
         loadingRows={5}
         empty={
-          <p className="py-10 text-center text-[12.5px] text-faint">
-            No whale events observed yet — the engine compares largest-account snapshots every
-            cycle and records a movement only when it exceeds the verified USD threshold.
-          </p>
+          events.length === 0 ? (
+            <p className="py-10 text-center text-[12.5px] text-faint">
+              No whale events observed yet — the engine compares largest-account snapshots every
+              cycle and records a movement only when it exceeds the verified USD threshold.
+            </p>
+          ) : null
         }
       >
         <ul className="divide-y divide-line-soft">

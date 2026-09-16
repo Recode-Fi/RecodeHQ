@@ -237,12 +237,12 @@ export function SolanaScannerView({ initialMint }: { initialMint?: string }) {
               <p className="py-10 text-center text-[12.5px] text-faint">
                 Direct lookup active — the resolved token is shown above.
               </p>
-            ) : (
+            ) : rows.length === 0 ? (
               <p className="py-10 text-center text-[12.5px] text-faint">
                 No tracked Solana tokens match this filter — the scanner only renders verified data.
                 Paste a mint address and press Scan for a direct live lookup.
               </p>
-            )
+            ) : null
           }
         >
           <div className="overflow-x-auto">

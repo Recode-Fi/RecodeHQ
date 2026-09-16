@@ -83,10 +83,12 @@ export function SolanaSmartMoney() {
           status={smart.status === "live" ? "live" : smart.status === "unavailable" ? "unavailable" : "syncing"}
           loadingRows={8}
           empty={
-            <p className="px-4 py-12 text-center text-[12.5px] text-faint">
-              No verified whale flows on Solana in this window yet — the engine records a flow
-              only when a verified balance delta crosses the whale threshold.
-            </p>
+            rows.length === 0 ? (
+              <p className="px-4 py-12 text-center text-[12.5px] text-faint">
+                No verified whale flows on Solana in this window yet — the engine records a flow
+                only when a verified balance delta crosses the whale threshold.
+              </p>
+            ) : null
           }
         >
           <table className="w-full text-[12.5px]">

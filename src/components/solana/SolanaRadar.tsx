@@ -105,10 +105,12 @@ export function SolanaRadar() {
           status={radar.status === "live" ? "live" : radar.status === "unavailable" ? "unavailable" : "syncing"}
           loadingRows={5}
           empty={
-            <p className="py-10 text-center text-[12.5px] text-faint">
-              No Solana signals detected yet — the radar needs at least one tracked market cycle of
-              verified data before it can derive anything.
-            </p>
+            signals.length === 0 ? (
+              <p className="py-10 text-center text-[12.5px] text-faint">
+                No Solana signals detected yet — the radar needs at least one tracked market cycle of
+                verified data before it can derive anything.
+              </p>
+            ) : null
           }
         >
           <ul className="divide-y divide-line-soft">

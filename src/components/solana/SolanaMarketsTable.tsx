@@ -167,10 +167,12 @@ export function SolanaMarketsTable() {
           status={badgeStatus === "unavailable" ? "unavailable" : badgeStatus === "syncing" ? "syncing" : "live"}
           loadingRows={8}
           empty={
-            <p className="py-10 text-center text-[12.5px] text-faint">
-              No tracked Solana tokens match — the engine indexes the active token universe and
-              never fabricates rows.
-            </p>
+            rows.length === 0 ? (
+              <p className="py-10 text-center text-[12.5px] text-faint">
+                No tracked Solana tokens match — the engine indexes the active token universe and
+                never fabricates rows.
+              </p>
+            ) : null
           }
         >
           <div className="overflow-x-auto">
