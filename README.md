@@ -1,16 +1,19 @@
 # RECODE — Decode what moves markets.
 
-RECODE is an intelligence platform for tokenized assets and on-chain markets —
-discovery, screening, scanning, wallet intelligence, signals and monitoring for
-RWAs across **Robinhood Chain** and **Solana**, architected for additional
-EVM and non-EVM networks.
+RECODE is an on-chain and market intelligence platform across **six live
+networks** — market intelligence, scanning, asset intelligence, wallet
+intelligence, whale activity, smart-money flows, radar signals and an
+AI analyst — built on a strict live-data integrity contract.
 
-**Modules:** RECODE Radar · RECODE Screen · RECODE Scan · RECODE Intelligence ·
-RECODE Signals · RECODE Forecast · RECODE Portfolio.
-Pipeline: RAW DATA → ANALYSIS → INTELLIGENCE → SIGNAL → ACTION.
+**Supported networks (all live):** Solana · Ethereum · BNB Smart Chain ·
+Arbitrum One · Arc (Circle) · Robinhood Chain
 
-**Stack:** Next.js 16 (App Router) · React 19 · TypeScript strict · Tailwind CSS v4 ·
-custom SVG charts (zero chart dependencies) · EIP-1193 wallet connection (zero wallet SDKs).
+**Modules:** RECODE Radar · Markets · Scan · Asset Intelligence ·
+Wallet Intelligence · Whale Activity · Smart Money · Signals · AI Agent.
+
+**Stack:** Next.js 16 (App Router) · React 19 · TypeScript strict ·
+Tailwind CSS v4 · custom SVG charts (zero chart dependencies) ·
+raw EIP-1193 + Phantom/Solflare wallet connection (zero wallet SDKs).
 
 ## Getting started
 
@@ -18,93 +21,117 @@ custom SVG charts (zero chart dependencies) · EIP-1193 wallet connection (zero 
 npm install
 npm run dev      # http://localhost:5180 (auto-fallback 5181-5183)
 npm run build    # production build
+npm test         # full test suite (vitest)
 npm start        # serve production build
 ```
+
+Works without any API keys — every network has a working public default
+provider. Optional dedicated RPCs (below) increase throughput.
+
+## Supported networks
+
+| Network | Family | Chain ID | Data sources |
+| --- | --- | --- | --- |
+| Solana | non-EVM | mainnet-beta | DexScreener (keyless) + Solana JSON-RPC |
+| Ethereum | EVM | 1 | DexScreener (keyless) + Ethereum JSON-RPC |
+| BNB Smart Chain | EVM | 56 | DexScreener (keyless) + BSC JSON-RPC |
+| Arbitrum One | EVM | 42161 | DexScreener (keyless) + Arbitrum JSON-RPC |
+| Arc (Circle) | EVM | 5042 | DexScreener (keyless) + Arc JSON-RPC; USDC gas |
+| Robinhood Chain | EVM | 4663 | Robinhood Stock Token API + Blockscout + Alchemy RPC + CoinGecko |
+
+All public endpoints are official and work without keys. Every RPC can be
+overridden server-side via environment variables (see below) for production
+throughput. Chain IDs and stablecoin emitters were verified on-chain before
+being encoded in `src/server/evmnet/config.ts` and `src/chains/registry.ts`.
 
 ## Architecture
 
 ```
-UI (components) → hooks (useSync) → services (recodeService)
+UI (chain-aware components) → hooks (useSync/useSolana/useArc/useEvmNet)
       ↓ HTTP (same-process API routes)
-src/server/sync/  MarketSyncEngine (background, booted by instrumentation.ts)
+src/server/sync/      Robinhood Chain MarketSyncEngine
+src/server/solana/    Solana intelligence layer (independent pipeline)
+src/server/arc/       Arc intelligence layer (USDC-gas semantics)
+src/server/evmnet/    Chain-generic EVM layer (Ethereum / BSC / Arbitrum)
       ↓
-providers: Blockscout explorer · Robinhood Stock Token API · Alchemy RPC ·
-           Yahoo (underlying mcaps) · CoinGecko (RWA aggregates) · optional indexer/price feed
-
-UI (Solana surfaces) → hooks (useSolana) → services (solanaService)
-      ↓ HTTP (same-process API routes)
-src/server/solana/  SolanaSyncEngine (background, booted by instrumentation.ts)
-      ↓
-providers: DexScreener (keyless DEX market data) · Solana JSON-RPC (mainnet-beta)
+providers: DexScreener · block-native JSON-RPC · Blockscout · Alchemy ·
+           CoinGecko · Gemini (AI) · optional indexer/price feed
 ```
 
-- **MarketSyncEngine** (`src/server/sync/`) — discovery (5m), metadata (2m), prices (15s),
-  candles (60s, lazy), transactions (5s), whales (10s), holders (5m), prune (30m).
-  Durable JSON cache in `.recode-cache/` (gitignored). Disable with `RECODE_SYNC_DISABLE=1`.
-- **Chain abstraction** (`src/chains/`) — `solana` (live, non-EVM), `robinhood` (live,
-  chain 4663), `shared` taxonomy. Networks register in `src/chains/registry.ts` (each
-  declares its address `family`: `evm` | `solana`, plus the official brand icon); the
-  network selector and every page adapt automatically. No chain-specific logic in the UI.
-- **Wallet** (`src/providers/wallet-provider.tsx`) — raw EIP-1193 (`window.ethereum`):
-  connect, chain verification (0x1237). Read-only; RECODE never signs or sends.
-  **Solana wallets** (`src/providers/solana-wallet-provider.tsx`) — separate raw provider
-  APIs (`window.phantom.solana` / `window.solflare`), read-only (public key only), never
-  mixed with EVM address logic (`src/lib/types.ts → addressFamily`).
-- **Solana intelligence layer** (`src/server/solana/`) — independent pipeline for Solana
-  mainnet-beta: DexScreener token discovery (profiles/boosts) + live DEX pairs (price,
-  market cap, liquidity, 24h volume, buy/sell txns, 24h change, DEX/pair info, logos),
-  Solana JSON-RPC for holder concentration (largest accounts + supply) and whale events
-  (rule-based largest-account balance deltas), radar signals (unusual volume, liquidity
-  changes, large transfers, price movement, newly active pairs) and wallet intelligence
-  (SOL + SPL balances, signature activity). JSON cache `.recode-cache/solana-store.json`.
-  Disable with `RECODE_SOLANA_DISABLE=1`; set `RECODE_SOLANA_RPC_URL` for production RPC.
-  Missing provider fields stay null — never 0, never fabricated.
-- **API**: `/api/sync/{status,overview,markets,candles,transactions,whales,holders,rwa-aggregates}`,
-  `/api/wallet/balances` (live RPC balances), `/api/wallet/activity` (explorer),
-  `/api/contract` (contract intelligence + rule-based risk),
-  `/api/solana/{status,markets,token/[mint],whales,radar}`,
-  `/api/solana/wallet/{balances,activity}` (Solana address family only).
+- **Chain abstraction** (`src/chains/registry.ts`) — every network declares
+  its address `family` (`evm` | `solana`), chain id, explorer and official
+  brand icon. The global network selector is the single source of truth:
+  Discover, Markets, Scanner, Asset Intelligence, Wallet Intelligence,
+  Whales, Smart Money, Radar and the AI agent all follow it. Address
+  families never share logic: base58 → Solana pipeline, `0x…` → the
+  selected network's EVM pipeline.
+- **EVM NET layer** (`src/server/evmnet/`) — one isolated engine per chain
+  (own RPC, own store file, own DexScreener chain filter). Whale flows come
+  from the chain's canonical stablecoin (`USDT` on Ethereum/BSC, `USDC` on
+  Arbitrum) Transfer logs — every event carries its real transaction hash.
+- **Arc layer** (`src/server/arc/`) — Arc-specific semantics: native USDC
+  gas (18 decimals; ERC-20 interface `0x3600…0000` at 6 decimals), EIP-7708
+  system-emitter whale flows, per-engine on-demand RPC isolation.
+- **Solana layer** (`src/server/solana/`) — DexScreener discovery/pairs,
+  holder concentration (largest accounts + supply), largest-account
+  balance-delta whale events, signature-based wallet activity.
+- **Wallets** — EVM via raw EIP-1193 (MetaMask/Rabby/Coinbase/Trust/Rainbow),
+  Solana via Phantom/Solflare. Read-only; RECODE never signs or sends.
+
+## API surface
+
+`/api/sync/*` (Robinhood) · `/api/solana/*` · `/api/arc/*` ·
+`/api/evm/[chain]/*` (ethereum | bsc | arbitrum) — each chain exposes
+`status`, `markets`, `whales`, `radar`, `smart-money`, `token/[address]`
+(direct live lookup) and `wallet/{balances,activity}`.
 
 ## Routes
 
 | Route | Description |
 | --- | --- |
-| `/` | Overview — Global Market Pulse, movers, live activity |
-| `/markets` · `/screener` · `/discover` · `/assets` | Verified market tables (filter/sort) |
-| `/stocks` `/etfs` `/treasuries` `/commodities` `/stablecoins` | Asset-class registries |
-| `/radar` | RECODE Radar — momentum × market-cap map, hover intelligence |
-| `/asset/[symbol]` | Asset Intelligence — chart, holders, transactions, whales |
-| `/wallets` · `/wallet/[address]` | Wallet Intelligence — live RPC balances + activity |
-| `/portfolio` | Connected-wallet portfolio (read-only) |
-| `/smart-money` | Wallet net-flow ranking from verified flows |
-| `/whales` | Whale activity feed (buy/sell/transfer/accumulation/distribution) |
-| `/alerts` | Local alert engine (price/volume/liquidity conditions) |
-| `/scanner` | RECODE Scan (contract scanner) — verification, ownership, risk verdict |
-| `/explorer` | Live transaction tape |
-| `/watchlist` | Saved assets / wallets / contracts |
+| `/` | Overview — global market pulse, movers, live activity |
+| `/app/discover` · `/app/markets` · `/app/assets` | Network-aware market/asset tables (filter/sort) |
+| `/app/scanner` | Contract/mint scanner with direct live lookup per network |
+| `/app/radar` | Per-chain radar signals with derivation bases |
+| `/app/token/[mint]` · `/app/asset/[symbol]` | Token / asset intelligence |
+| `/app/wallets` · `/app/wallet/[address]` | Wallet Intelligence (per selected network) |
+| `/app/whales` | Whale activity feed (transfer/accumulation/distribution) |
+| `/app/smart-money` | Per-chain verified net-flow ranking |
+| `/app/screener` · `/app/signals` · `/app/portfolio` · `/app/watchlist` · `/app/explorer` | Screener, alerts, portfolio, watchlist, tx tape |
 
-## Environment variables (`.env.local`, see `.env.example`)
+## Environment variables
+
+Everything is **optional** — defaults use verified public endpoints and the
+app runs keyless. See `.env.example` for the full annotated reference.
+Server-side only (never exposed to the browser):
 
 | Variable | Purpose |
 | --- | --- |
-| `ALCHEMY_API_KEY` | Robinhood Chain RPC (metadata, wallet balances, scanner). Server-side only. |
-| `RECODE_RPC_URL` | Explicit EVM RPC override (falls back to ALCHEMY_RPC_URL → Alchemy key) |
-| `RECODE_CHAIN_ID` | Server chain id (default 4663) |
-| `NEXT_PUBLIC_RECODE_CHAIN_ID` | Expected chain id hex for wallet verification (`0x1237`) |
-| `RECODE_INDEXER_URL` | Optional REST indexer (wallets, liquidity) |
-| `RECODE_PRICE_FEED_URL` | Optional OHLCV feed (observed ticks aggregate without it) |
-| `RECODE_MARKET_LIST_URL` / `markets.robinhood-chain.json` | Optional market registry |
-| `RECODE_BLOCKSCOUT_URL` | Explorer override (default `https://robinhoodchain.blockscout.com`) |
-| `RECODE_ROBINHOOD_API_URL` | Official stock-token API override |
-| `COINGECKO_API_KEY` / `RWA_XYZ_API_URL` | Optional aggregate providers (server-side) |
+| `RECODE_SOLANA_RPC_URL` | Dedicated Solana RPC (Helius/Alchemy/QuickNode) — higher throughput |
+| `RECODE_ARC_RPC_URL` | Dedicated Arc RPC (default: official `rpc.mainnet.arc.io`) |
+| `RECODE_ETH_RPC_URL` | Dedicated Ethereum RPC (default: publicnode) |
+| `RECODE_BSC_RPC_URL` | Dedicated BSC RPC (default: publicnode — dataseed rejects logs) |
+| `RECODE_ARBITRUM_RPC_URL` | Dedicated Arbitrum RPC (default: official `arb1.arbitrum.io/rpc`) |
+| `ALCHEMY_API_KEY` | Robinhood Chain RPC (derived server-side) |
+| `COINGECKO_API_KEY` | RWA aggregate provider (optional) |
+| `GEMINI_API_KEY` / `RECODE_AGENT_MODEL` | AI agent provider (server-side only) |
+| `RECODE_RPC_URL` | Robinhood Chain EVM RPC override |
+| `RECODE_INDEXER_URL` / `RECODE_PRICE_FEED_URL` | Optional custom indexer / OHLCV feed |
+
+Production (Vercel) keys are configured as project environment variables —
+never committed. `RECODE_*_DISABLE=1` disables any engine for local work.
 
 ## Data integrity policy (critical)
 
-RECODE **never fabricates** prices, market caps, volumes, liquidity, TVL, holder
-counts, balances, whale events, PnL or risk verdicts. Without a verified source a
-surface renders **"Data unavailable"**, **"Awaiting data"** or **"Syncing"** — never
-`$0`, never simulated numbers. Wallet behavioral labels and the contract risk verdict are
-rule-based over verified evidence and expose UNKNOWN/insufficient-data as first-class outcomes.
+RECODE **never fabricates** prices, market caps, volumes, liquidity, holder
+counts, balances, whale events, smart-money scores, PnL or risk verdicts.
+Without a verified source a surface renders **"Data unavailable"** /
+**"Syncing"** — never `$0`, never another chain's data. Direct token lookups
+use exact contract/mint matching only (quote-side pairs and symbol-only
+matches are never substituted). Whale/smart-money events always expose their
+derivation basis; per-chain computations are never copied across networks.
+Unavailable history is labeled ("historical activity is limited to the
+available indexed window") rather than papered over.
 
 ## Brand
 
@@ -113,17 +140,9 @@ rule-based over verified evidence and expose UNKNOWN/insufficient-data as first-
 - Palette: `#050505` bg · `#0b0d0c` surface · `#101311` panel · `#202521` line ·
   `#f5f7f5` text · `#00c805` signal · `#f6465d` negative · `#e2b344` warning.
 - Type: Manrope (display/UI) · JetBrains Mono (data, tabular numerals).
+- Dark mode is the SSR default; light mode is an opt-in saved preference
+  (`<html data-theme="light">`, no first-paint flash).
 
-## RECODE Token configuration
+## License
 
-The $RECODE token is configured in `src/lib/recodeConfig.ts` (single source of
-truth). The landing-page token card and `/app/token` both read from it plus the
-MarketSyncEngine store - one data pipeline, no secondary price system.
-
-To activate the token card after launch: set `launched: true` and
-`contractAddress` in `src/lib/recodeConfig.ts`, and add the contract to
-`markets.robinhood-chain.json` so the engine indexes it. Until then all token
-metrics show honest "Data unavailable" states - values are never estimated.
-
-Light mode: the design system supports an opt-in centralized light theme via
-`<html data-theme="light">` (see `globals.css`). Default remains dark.
+Private — all rights reserved unless a LICENSE file states otherwise.

@@ -21,13 +21,19 @@ projects from this codebase.
 - Boot/initialization experience: `src/components/boot/InitSequence.tsx`
   (once per browser session, Esc to skip).
 
-- Chain abstraction: `src/chains/registry.ts` — Robinhood Chain (live, 4663),
-  Solana (live, non-EVM, family "solana"), future chains register there. UI reads
-  network state via `ChainProvider` (`useChain`); official network logos come from
-  the registry (`icon`) rendered by `src/components/ui/NetworkIcon.tsx`.
+- Chain abstraction: `src/chains/registry.ts` — six live networks: Solana
+  (live, non-EVM, family "solana"), Ethereum (1), BSC (56), Arbitrum One
+  (42161), Arc (5042, USDC gas), Robinhood Chain (4663). The global network
+  selector (`ChainProvider`/`useChain`) is the single source of truth —
+  Discover, Markets, Scanner, Asset Intelligence, Wallet Intelligence,
+  Whales, Smart Money, Radar and the AI agent all follow it. Official network
+  logos come from the registry (`icon`) rendered by
+  `src/components/ui/NetworkIcon.tsx`.
 
 - Wallet connection: `src/providers/wallet-provider.tsx` — raw EIP-1193
-  (`window.ethereum`), read-only (balances). No wallet SDKs, no signing/sending.
+  (`window.ethereum`), read-only. No wallet SDKs, no signing/sending.
+  Solana wallets: `src/providers/solana-wallet-provider.tsx` (Phantom /
+  Solflare, public key only). Address families never share logic.
 
 - MarketSyncEngine: `src/server/sync/` (background Robinhood Chain sync, booted
   by `src/instrumentation.ts`, env-configured providers, JSON cache in
