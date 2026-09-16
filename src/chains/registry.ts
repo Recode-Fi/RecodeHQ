@@ -14,6 +14,9 @@
 import solanaIcon from "@web3icons/core/svgs/tokens/branded/SOL.svg";
 import robinhoodChainIcon from "@web3icons/core/svgs/networks/branded/robinhood.svg";
 import arcIcon from "@web3icons/core/svgs/networks/branded/arc.svg";
+import ethereumIcon from "@web3icons/core/svgs/networks/branded/ethereum.svg";
+import bscIcon from "@web3icons/core/svgs/networks/branded/binance-smart-chain.svg";
+import arbitrumIcon from "@web3icons/core/svgs/networks/branded/arbitrum-one.svg";
 
 export interface NetworkConfig {
   id: string;
@@ -94,12 +97,72 @@ export const ARC: NetworkConfig = {
 };
 
 /**
+ * Ethereum / BSC / Arbitrum — live EVM networks served by the generic
+ * EVM NET layer (src/server/evmnet/): DexScreener markets + chain RPC.
+ * Official values verified live (chain ids probed, explorers official):
+ *   Ethereum 1 / etherscan.io / ETH · BSC 56 / bscscan.com / BNB ·
+ *   Arbitrum One 42161 / arbiscan.io / ETH.
+ */
+export const ETHEREUM: NetworkConfig = {
+  id: "ethereum",
+  name: "Ethereum",
+  shortName: "ETH",
+  kind: "chain",
+  family: "evm",
+  chainId: 1,
+  chainIdHex: "0x1",
+  explorerUrl: "https://etherscan.io",
+  engineChainId: 1,
+  note: "Live EVM network. Indexed via DexScreener (chain 'ethereum') + Ethereum JSON-RPC.",
+  icon: ethereumIcon,
+};
+
+export const BSC: NetworkConfig = {
+  id: "bsc",
+  name: "BNB Smart Chain",
+  shortName: "BSC",
+  kind: "chain",
+  family: "evm",
+  chainId: 56,
+  chainIdHex: "0x38",
+  explorerUrl: "https://bscscan.com",
+  engineChainId: 56,
+  note: "Live EVM network. Indexed via DexScreener (chain 'bsc') + BSC JSON-RPC.",
+  icon: bscIcon,
+};
+
+export const ARBITRUM: NetworkConfig = {
+  id: "arbitrum",
+  name: "Arbitrum One",
+  shortName: "ARB",
+  kind: "chain",
+  family: "evm",
+  chainId: 42161,
+  chainIdHex: "0xa4b1",
+  explorerUrl: "https://arbiscan.io",
+  engineChainId: 42161,
+  note: "Live EVM network. Indexed via DexScreener (chain 'arbitrum') + Arbitrum JSON-RPC.",
+  icon: arbitrumIcon,
+};
+
+/**
  * Future EVM chains register here with engineChainId set once their
  * indexer/provider is wired — no UI changes required.
  */
 export const RESERVED_CHAINS: NetworkConfig[] = [];
 
-export const NETWORKS: NetworkConfig[] = [SOLANA, ARC, ROBINHOOD_CHAIN, ...RESERVED_CHAINS];
+export const NETWORKS: NetworkConfig[] = [
+  SOLANA,
+  ETHEREUM,
+  BSC,
+  ARBITRUM,
+  ARC,
+  ROBINHOOD_CHAIN,
+  ...RESERVED_CHAINS,
+];
+
+/** EVM-net chains served by the generic EVM NET layer. */
+export const EVM_NET_IDS = ["ethereum", "bsc", "arbitrum"] as const;
 
 /** True when the given network id is a non-EVM family. */
 export function isSolanaNetwork(id: string): boolean {

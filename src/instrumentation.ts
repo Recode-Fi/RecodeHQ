@@ -26,4 +26,11 @@ export async function register() {
   } catch (err) {
     console.error("[recode] failed to start Arc intelligence layer:", err);
   }
+  if (process.env.RECODE_EVM_NET_DISABLE === "1") return;
+  try {
+    const { startAllEvmNetEngines } = await import("./server/evmnet/registry");
+    startAllEvmNetEngines();
+  } catch (err) {
+    console.error("[recode] failed to start EVM NET intelligence layer:", err);
+  }
 }

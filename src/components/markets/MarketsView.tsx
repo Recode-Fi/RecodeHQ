@@ -1,9 +1,10 @@
 ﻿"use client";
 
-import { useChain } from "@/providers/chain-provider";
 import { MarketsTable } from "./MarketsTable";
 import { SolanaMarketsTable } from "@/components/solana/SolanaMarketsTable";
 import { ArcMarketsTable } from "@/components/arc/ArcMarketsTable";
+import { EvmNetMarketsTable } from "@/components/evmnet/EvmNetMarketsTable";
+import { useChain } from "@/providers/chain-provider";
 
 /**
  * Network-aware markets surface: the EVM screener for EVM networks /
@@ -22,9 +23,10 @@ export function MarketsView({
   assetType?: string;
   showFilters?: boolean;
 }) {
-  const { isSolana, isArc } = useChain();
+  const { isSolana, isArc, evmNetChain } = useChain();
   if (isSolana) return <SolanaMarketsTable />;
   if (isArc) return <ArcMarketsTable />;
+  if (evmNetChain) return <EvmNetMarketsTable chain={evmNetChain} />;
   return (
     <MarketsTable
       title={title}
