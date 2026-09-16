@@ -102,6 +102,12 @@ export class EvmNetEngine {
     );
   }
 
+  /** Bounded one-shot whale scan + radar for cold instances. */
+  async warmWhales(): Promise<void> {
+    await this.runWhales();
+    await this.runRadar();
+  }
+
   ensureStarted(): void {
     this.start();
   }

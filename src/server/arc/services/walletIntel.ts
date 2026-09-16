@@ -115,7 +115,7 @@ export async function fetchArcWalletBalances(
     network: "mainnet",
     chainId: ARC_CONFIG.chainId,
     address,
-    chainOnline: rpc.state.ok === true,
+    chainOnline: rpc.state.ok === true || (rpc.state.lastSuccess != null && Date.now() - rpc.state.lastSuccess < 300_000),
     holdings,
     pricedCount: priced.length,
     totalValueUsd: total,

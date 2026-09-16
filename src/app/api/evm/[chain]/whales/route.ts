@@ -16,5 +16,14 @@ export async function GET(
   const engine = getEvmNetEngine(key);
   engine.ensureStarted();
   const store = getEvmNetStore(key).get();
-  return NextResponse.json({ status: "live", data: store.whales });
+  // Cold-instance warm-up: run one bounded whale+radar pass so the
+  // first visit sees real events instead of an empty feed.
+  if (store.whales.length === 0) {
+    await Promise.race([
+      engine.warmWhales(),
+      new Promise((resolve) => setTimeout(resolve, 12_000)),
+    ]);
+  }
+  const fresh = getEvmNetStore(key).get();
+  return NextResponse.json({ status: "live", data: fresh.whales });
 }

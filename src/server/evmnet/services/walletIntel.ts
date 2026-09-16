@@ -115,7 +115,7 @@ export async function fetchEvmNetWalletBalances(
     network: "mainnet",
     chainId: cfg.chainId,
     address,
-    chainOnline: rpc.state.ok === true,
+    chainOnline: rpc.state.ok === true || (rpc.state.lastSuccess != null && Date.now() - rpc.state.lastSuccess < 300_000),
     nativeSymbol: cfg.nativeSymbol,
     holdings,
     pricedCount: priced.length,

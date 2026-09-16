@@ -8,5 +8,13 @@ export async function GET() {
   const engine = getArcSyncEngine();
   engine.ensureStarted();
   const store = getArcStore().get();
-  return NextResponse.json({ status: "live", data: store.whales });
+  // Cold-instance warm-up (bounded) — same contract as EVM NET whales.
+  if (store.whales.length === 0) {
+    await Promise.race([
+      engine.warmWhales(),
+      new Promise((resolve) => setTimeout(resolve, 12_000)),
+    ]);
+  }
+  const fresh = getArcStore().get();
+  return NextResponse.json({ status: "live", data: fresh.whales });
 }
