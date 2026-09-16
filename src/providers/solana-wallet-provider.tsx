@@ -26,6 +26,27 @@ export function SolanaWalletProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     setInstalled(installedSolanaWallets());
+    // Silent reconnect for previously-authorized wallets: connect with
+    // { onlyIfTrusted } never pops a dialog — an authorized connection
+    // restores the public key (gate stays open on refresh).
+    const last = localStorage.getItem("recode.solWallet");
+    if (last === "phantom" || last === "solflare") {
+      const provider = resolveSolanaProvider(last);
+      if (provider?.connect) {
+        void provider
+          .connect({ onlyIfTrusted: true })
+          .then((res) => {
+            const pub = res?.publicKey?.toString() ?? provider.publicKey?.toString() ?? null;
+            if (pub) {
+              setAddress(pub);
+              setConnectedWallet(last);
+            }
+          })
+          .catch(() => {
+            /* not trusted — stay disconnected */
+          });
+      }
+    }
   }, []);
 
   const connect = useCallback(async (walletId: SolanaWalletId) => {
@@ -47,6 +68,7 @@ export function SolanaWalletProvider({ children }: { children: ReactNode }) {
         setConnectingWallet(null);
         return;
       }
+      localStorage.setItem("recode.solWallet", walletId);
       setAddress(pub);
       setConnectedWallet(walletId);
       setConnectingWallet(null);
@@ -63,6 +85,7 @@ export function SolanaWalletProvider({ children }: { children: ReactNode }) {
     } catch {
       /* provider disconnect failures never block local state */
     }
+    localStorage.removeItem("recode.solWallet");
     setAddress(null);
     setConnectedWallet(null);
     setError(null);

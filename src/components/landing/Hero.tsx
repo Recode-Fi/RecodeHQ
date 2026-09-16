@@ -67,20 +67,21 @@ export function HeroSection() {
             Decode what moves markets.
           </h1>
           <p className="fade-up mt-5 max-w-xl text-[15px] leading-relaxed text-muted" style={{ animationDelay: "180ms" }}>
-            Real-time intelligence for tokenized assets, RWA markets and on-chain activity.
+            Connect a wallet to access the RECODE intelligence terminal — live markets, wallets,
+            whales and radar across six networks.
           </p>
           <div className="fade-up mt-8 flex flex-wrap gap-3" style={{ animationDelay: "240ms" }}>
             <Link
               href="/app"
               className="rounded-[4px] border border-green/40 bg-green-soft px-6 py-3 text-[13px] font-semibold text-green transition-colors"
             >
-              RECODE App
+              Connect Wallet
             </Link>
             <Link
               href="/app/markets"
               className="rounded-[4px] border border-line bg-panel px-6 py-3 text-[13px] font-semibold text-text transition-colors hover:border-line-strong"
             >
-              Explore Markets
+              Explore RECODE
             </Link>
           </div>
           <p className="mt-6 text-[11px] leading-relaxed text-faint">

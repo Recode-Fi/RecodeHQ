@@ -111,7 +111,7 @@ export function FinalCta() {
             href="/app"
             className="rounded-[4px] btn-accent px-7 py-3 text-[13px] font-semibold text-green transition-colors"
           >
-            RECODE App
+            Enter RECODE Terminal →
           </Link>
         </div>
       </div>

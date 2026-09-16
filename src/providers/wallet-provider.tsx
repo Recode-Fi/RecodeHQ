@@ -63,6 +63,19 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     const onChain = (...args: unknown[]) => setChainIdHex(args[0] as string);
     eth?.on?.("accountsChanged", onAccounts);
     eth?.on?.("chainChanged", onChain);
+    // Silent reconnect for previously-authorized wallets: eth_accounts
+    // never pops a dialog — an authorized connection restores access
+    // (gate stays open on refresh); unauthorized stays disconnected.
+    void (eth
+      ?.request?.({ method: "eth_accounts" }) as Promise<string[] | unknown> | undefined)
+      ?.then((accounts) => {
+        if (Array.isArray(accounts) && accounts.length > 0) {
+          setAddress(String(accounts[0]).toLowerCase());
+        }
+      })
+      .catch(() => {
+        /* passive restore failures leave the gate state untouched */
+      });
     return () => {
       window.removeEventListener("eip6963:announceProvider", onAnnounce as EventListener);
       eth?.removeListener?.("accountsChanged", onAccounts);
