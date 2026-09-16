@@ -152,7 +152,14 @@ export async function arcDirectLookup(
   const errors: string[] = [];
 
   const pairs = (await dexscreener.tokens([address])) ?? [];
-  const best = bestArcPair(pairs);
+  // EXACT-MATCH rule: only pairs where the queried address is the BASE
+  // token. DexScreener also returns pairs where the address is the
+  // quote (e.g. everything trading against USDC) — using those would
+  // attach another token's market to this address.
+  const ownPairs = pairs.filter(
+    (p) => p.baseToken?.address?.toLowerCase() === address,
+  );
+  const best = bestArcPair(ownPairs);
   const store = getArcStore().get();
   const now = Date.now();
 
@@ -211,7 +218,7 @@ export async function arcDirectLookup(
     whales: getArcStore()
       .get()
       .whales.filter((w) => w.to === address || w.from === address).length,
-    pairs: pairs.length,
+    pairs: ownPairs.length,
     source: best
       ? 'DexScreener (chain "arc") + Arc RPC eth_getCode/eth_call'
       : "Arc RPC eth_getCode/eth_call",

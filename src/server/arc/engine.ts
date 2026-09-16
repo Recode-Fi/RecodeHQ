@@ -86,6 +86,12 @@ export class ArcSyncEngine {
     this.start();
   }
 
+  /** Bounded one-shot discovery + market refresh for cold instances. */
+  async warmUp(): Promise<void> {
+    await this.runDiscovery();
+    await this.runMarkets();
+  }
+
   status() {
     const store = this.store().get();
     return {

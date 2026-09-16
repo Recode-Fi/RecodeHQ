@@ -42,9 +42,14 @@ export async function evmNetDirectLookup(
   const errors: string[] = [];
 
   const pairs = (await dexscreener.tokens([address])) ?? [];
+  // EXACT-MATCH rule: only pairs where the queried address is the BASE
+  // token (never quote-side pairs — see arc direct lookup).
+  const ownPairs = pairs.filter(
+    (p) => p.baseToken?.address?.toLowerCase() === address,
+  );
   const best =
-    pairs.length > 0
-      ? [...pairs].sort((a, b) => (b.liquidity?.usd ?? 0) - (a.liquidity?.usd ?? 0))[0]
+    ownPairs.length > 0
+      ? [...ownPairs].sort((a, b) => (b.liquidity?.usd ?? 0) - (a.liquidity?.usd ?? 0))[0]
       : null;
   const store = getEvmNetStore(chain).get();
   const now = Date.now();
@@ -101,7 +106,7 @@ export async function evmNetDirectLookup(
     direct: true,
     token,
     metadata: { address, isContract, symbol, name, decimals },
-    pairs: pairs.length,
+    pairs: ownPairs.length,
     source: best
       ? `DexScreener (chain "${cfg.dexscreenerChain}") + ${cfg.name} RPC`
       : `${cfg.name} RPC eth_getCode/eth_call`,

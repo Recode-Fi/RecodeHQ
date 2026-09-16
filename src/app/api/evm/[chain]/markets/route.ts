@@ -16,7 +16,17 @@ export async function GET(
   const engine = getEvmNetEngine(key);
   engine.ensureStarted();
   const store = getEvmNetStore(key).get();
-  const rows = Object.values(store.tokens)
+  // Cold-instance warm-up: a fresh serverless instance has an empty
+  // store until the first background cycle — run one bounded pass so
+  // the first user visit gets real rows instead of an empty state.
+  if (Object.keys(store.tokens).length === 0) {
+    await Promise.race([
+      engine.warmUp(),
+      new Promise((resolve) => setTimeout(resolve, 12_000)),
+    ]);
+  }
+  const fresh = getEvmNetStore(key).get();
+  const rows = Object.values(fresh.tokens)
     .sort((a, b) => (b.volume24h ?? b.liquidity ?? 0) - (a.volume24h ?? a.liquidity ?? 0))
     .map((t) => ({
       chain: key,

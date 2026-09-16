@@ -8,7 +8,15 @@ export async function GET() {
   const engine = getArcSyncEngine();
   engine.ensureStarted();
   const store = getArcStore().get();
-  const rows = Object.values(store.tokens)
+  // Cold-instance warm-up (bounded) — same contract as EVM NET markets.
+  if (Object.keys(store.tokens).length === 0) {
+    await Promise.race([
+      engine.warmUp(),
+      new Promise((resolve) => setTimeout(resolve, 12_000)),
+    ]);
+  }
+  const fresh = getArcStore().get();
+  const rows = Object.values(fresh.tokens)
     .sort((a, b) => (b.volume24h ?? b.liquidity ?? 0) - (a.volume24h ?? a.liquidity ?? 0))
     .map((t) => ({
       chain: "arc" as const,
