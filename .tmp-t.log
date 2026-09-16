@@ -1,0 +1,44 @@
+﻿node.exe : [33mThe CJS build of Vite's Node API is deprecated. See 
+https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+At C:\Program Files\nodejs\npx.ps1:29 char:3
++   & $NODE_EXE $NPX_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([33mThe CJS bu...e details.[39m:String) [], RemoteExc 
+   eption
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/ramad/.cline/data/workspaces/chat/recode[39m
+
+ [31mΓ¥»[39m tests/solana-wallet.test.ts [2m([22m[2m9 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 2519[2mms[22m[39m
+[31m   [31m├ù[31m Solana wallet activity (transaction normalization)[2m > [22mreports unavailable when signatures cannot be fetched (RPC errors)[33m 2507[2mms[22m[31m[39m
+[31m     ΓåÆ Cannot read properties of undefined (reading 'lastError')[39m
+
+[31mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1m[7m Failed Tests 1 [27m[22mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/solana-wallet.test.ts[2m > [22mSolana wallet activity 
+(transaction normalization)[2m > [22mreports unavailable when signatures cannot be fetched (RPC 
+errors)
+[31m[1mTypeError[22m: Cannot read properties of undefined (reading 'lastError')[39m
+[36m [2mΓ¥»[22m Module.fetchWalletActivityPage 
+src/server/solana/services/walletActivity.ts:[2m343:36[22m[39m
+    [90m341| [39m        [32m"Signature history unavailable (RPC rate limit or 
+offline)"[39m[33m,[39m
+    [90m342| [39m        [90m// Provider diagnostics so the degraded state is explainable, 
+[39mΓÇª
+    [90m343| [39m        
+[32m`rpc.lastError=[39m[36m${[39mrpc[33m.[39mstate[33m.[39mlastError [33m??[39m 
+[32m"none"[39m[36m}[39m[32m`[39m[33m,[39m
+    [90m   | [39m                                   [31m^[39m
+    [90m344| [39m        [32m`rpc.consecutiveFailures=[39m[36m${[39mrpc[33m.[39mstate[33m.[
+39mconsecutiveFailures[36m}[39m[32m`[39m[33m,[39m
+    [90m345| [39m      ][33m,[39m
+[90m [2mΓ¥»[22m tests/solana-wallet.test.ts:[2m302:18[22m[39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/1]ΓÄ»[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m8 passed[39m[22m[90m (9)[39m
+[2m   Start at [22m 09:40:01
+[2m   Duration [22m 3.11s[2m (transform 125ms, setup 0ms, collect 147ms, tests 2.52s, environment 0ms, prepare 170ms)[22m
+

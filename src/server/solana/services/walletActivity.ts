@@ -307,6 +307,9 @@ export async function fetchWalletActivityPage(
     detailLimit?: number;
     before?: string | null;
     priceOf?: (mint: string | null) => number | null;
+    /** Grace-retry policy for 429/backoff collisions (injectable for tests). */
+    graceRetries?: number;
+    graceDelayMs?: number;
   } = {},
 ): Promise<WalletActivityPage> {
   const errors: string[] = [];
@@ -314,7 +317,20 @@ export async function fetchWalletActivityPage(
   const detailLimit = Math.max(1, Math.min(25, opts.detailLimit ?? 12));
   const priceOf = opts.priceOf ?? (() => null);
 
-  const sigs = await rpc.getSignatures(address, limit, opts.before ?? null);
+  let sigs = await rpc.getSignatures(address, limit, opts.before ?? null);
+  // Grace retries: the background whale/holder cycles share this RPC key's
+  // server-side budget, and their bursts can 429 an interactive request.
+  // Wait out the provider's actual backoff window (bounded) so a collision
+  // doesn't degrade an interactive response — the result is still the
+  // provider's real answer (null stays null). Retries are injectable for
+  // tests (opts.graceRetries / opts.graceDelayMs).
+  const graceRetries = opts.graceRetries ?? 3;
+  for (let attempt = 0; attempt < graceRetries && sigs == null; attempt++) {
+    await new Promise((resolve) =>
+      setTimeout(resolve, Math.max(opts.graceDelayMs ?? 2_500, (rpc.msUntilAllowed?.() ?? 0) + 250)),
+    );
+    sigs = await rpc.getSignatures(address, limit, opts.before ?? null);
+  }
   if (sigs == null) {
     return {
       chain: "solana",
@@ -329,7 +345,12 @@ export async function fetchWalletActivityPage(
       hasMore: false,
       oldestTs: null,
       updatedAt: Date.now(),
-      errors: ["Signature history unavailable (RPC rate limit or offline)"],
+      errors: [
+        "Signature history unavailable (RPC rate limit or offline)",
+        // Provider diagnostics so the degraded state is explainable, not mute.
+        `rpc.lastError=${rpc.state?.lastError ?? "none"}`,
+        `rpc.consecutiveFailures=${rpc.state?.consecutiveFailures ?? 0}`,
+      ],
     };
   }
 

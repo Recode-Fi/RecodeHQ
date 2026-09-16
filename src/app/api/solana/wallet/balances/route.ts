@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSolanaSyncEngine } from "@/server/solana/engine";
+import { getOnDemandRpc } from "@/server/solana/rpcClient";
 import { fetchSolanaWalletBalances } from "@/server/solana/services/walletIntel";
 import { isValidSolanaAddress } from "@/lib/base58";
 
@@ -21,7 +22,7 @@ export async function GET(request: Request) {
     );
   }
   try {
-    const data = await fetchSolanaWalletBalances(getSolanaSyncEngine().rpc, getSolanaSyncEngine(), address);
+    const data = await fetchSolanaWalletBalances(getOnDemandRpc(), getSolanaSyncEngine(), address);
     return NextResponse.json({
       status: data.chainOnline ? "live" : "unavailable",
       data,

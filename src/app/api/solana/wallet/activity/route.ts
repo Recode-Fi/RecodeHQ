@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSolanaSyncEngine } from "@/server/solana/engine";
+import { getOnDemandRpc } from "@/server/solana/rpcClient";
 import { fetchSolanaWalletActivityPage } from "@/server/solana/services/walletIntel";
 import { isValidSolanaAddress } from "@/lib/base58";
 
@@ -26,7 +27,7 @@ export async function GET(request: Request) {
   const limit = Number.isFinite(limitParam) && limitParam > 0 && limitParam <= 50 ? limitParam : 25;
   const before = url.searchParams.get("before")?.trim() || null;
   try {
-    const data = await fetchSolanaWalletActivityPage(getSolanaSyncEngine().rpc, address, {
+    const data = await fetchSolanaWalletActivityPage(getOnDemandRpc(), address, {
       limit,
       before,
     });

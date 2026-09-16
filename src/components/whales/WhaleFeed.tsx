@@ -68,17 +68,16 @@ function emptyMessage(kind: string, meta: WhaleFeedMeta | null): string {
 
 /** Live whale activity feed — verified on-chain flows only. */
 export function WhaleFeed({ compact = false }: { compact?: boolean }) {
-  const whales = useSyncPolling<{ data: LiveWhale[]; meta?: WhaleFeedMeta }>(
-    "/api/sync/whales",
-    8_000,
-  );
+  const whales = useSyncPolling<LiveWhale[]>("/api/sync/whales", 8_000);
   const [kind, setKind] = useState<string>("all");
   const [minUsd, setMinUsd] = useState(0);
 
-  const rows = (whales.data?.data ?? []).filter(
+  /* /api/sync/whales returns { status, data: LiveWhale[], meta } — the poll
+     hook unwraps `data`, so rows come from whales.data and meta from whales.meta. */
+  const rows = (whales.data ?? []).filter(
     (w) => (kind === "all" || w.kind === kind) && (w.usd ?? 0) >= minUsd,
   );
-  const meta = whales.data?.meta ?? null;
+  const meta = (whales.meta as WhaleFeedMeta | null) ?? null;
 
   /* Auto-register the active whale-feed filters with the RECODE Agent. */
   useAgentPageContext(

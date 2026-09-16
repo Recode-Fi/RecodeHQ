@@ -80,7 +80,10 @@ export const SYNC_CONFIG = {
   },
   retention: {
     historyMs: 30 * 24 * 3_600_000,
-    transactions: 500,
+    // Must span the 24H flow window used by deriveFlowKinds/Smart Money at the
+    // live ingest rate (~1-2 tx/s) — 500 txs covered only ~5-8 minutes, so
+    // rule-based accumulation/distribution rows could never persist.
+    transactions: 5_000,
     whales: 300,
     discovery: 50,
     maxCandles: 1_000,

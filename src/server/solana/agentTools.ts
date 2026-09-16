@@ -3,6 +3,7 @@ import { getSolanaStore } from "./store";
 import { toWhaleFeed, holderConcentration, tokenDetail } from "./services/rows";
 import { buildScannerRows, smartMoneyRankings } from "./services/scanner";
 import { SOLANA_CONFIG } from "./config";
+import { getOnDemandRpc } from "./rpcClient";
 import { SOLANA_ADDRESS_RE } from "@/lib/types";
 import { isValidSolanaAddress } from "@/lib/base58";
 import type { ToolDef } from "@/server/agent/types";
@@ -156,7 +157,7 @@ const getSolanaTokenIntel: ToolDef = {
       const { directLookup } = await import("./services/directLookup");
       const lookup = await directLookup(query.trim(), {
         dexscreener: getSolanaSyncEngine().dexscreener,
-        rpc: getSolanaSyncEngine().rpc,
+        rpc: getOnDemandRpc(),
         store: getSolanaStore(),
       });
       if (lookup.status === "mint-only") {
@@ -233,8 +234,8 @@ const getSolanaWalletIntel: ToolDef = {
     const { fetchSolanaWalletBalances, fetchSolanaWalletActivity } =
       await import("./services/walletIntel");
     const [balances, activity] = await Promise.all([
-      fetchSolanaWalletBalances(getSolanaSyncEngine().rpc, getSolanaSyncEngine(), a),
-      fetchSolanaWalletActivity(getSolanaSyncEngine().rpc, getSolanaSyncEngine(), a).catch(
+      fetchSolanaWalletBalances(getOnDemandRpc(), getSolanaSyncEngine(), a),
+      fetchSolanaWalletActivity(getOnDemandRpc(), getSolanaSyncEngine(), a).catch(
         () => null,
       ),
     ]);

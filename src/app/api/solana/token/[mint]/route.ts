@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSolanaSyncEngine } from "@/server/solana/engine";
+import { getOnDemandRpc } from "@/server/solana/rpcClient";
 import { getSolanaStore } from "@/server/solana/store";
 import { holderConcentration } from "@/server/solana/services/rows";
 import { directLookup } from "@/server/solana/services/directLookup";
@@ -38,7 +39,7 @@ export async function GET(
   const engine = getSolanaSyncEngine();
   const result = await directLookup(address, {
     dexscreener: engine.dexscreener,
-    rpc: engine.rpc,
+    rpc: getOnDemandRpc(),
     store: getSolanaStore(),
   });
 

@@ -8,6 +8,8 @@ import { recodeService, type LiveMarketRow, type LiveIntelligence } from "@/serv
 
 export interface SyncPoll<T> {
   data: T | null;
+  /** Route-supplied metadata (present when the endpoint ships a `meta` object). */
+  meta: unknown;
   status: DataStatus;
   lastUpdated: number | null;
   refresh: () => void;
@@ -19,6 +21,7 @@ export interface SyncPoll<T> {
  */
 export function useSyncPolling<T>(path: string, intervalMs: number): SyncPoll<T> {
   const [data, setData] = useState<T | null>(null);
+  const [meta, setMeta] = useState<unknown>(null);
   const [status, setStatus] = useState<DataStatus>("connecting");
   const [lastUpdated, setLastUpdated] = useState<number | null>(null);
 
@@ -31,13 +34,15 @@ export function useSyncPolling<T>(path: string, intervalMs: number): SyncPoll<T>
           setStatus("unavailable");
           return;
         }
-        const json = (await res.json()) as { status?: string; data?: T };
+        const json = (await res.json()) as { status?: string; data?: T; meta?: unknown };
         if (json.status === "live" && json.data != null) {
           setData(json.data);
+          setMeta(json.meta ?? null);
           setStatus("live");
           setLastUpdated(Date.now());
         } else if (json.status === "stale") {
           setData(json.data ?? null);
+          setMeta(json.meta ?? null);
           setStatus("stale");
         } else {
           setStatus("syncing");
@@ -73,7 +78,7 @@ export function useSyncPolling<T>(path: string, intervalMs: number): SyncPoll<T>
     void load(new AbortController().signal);
   }, [load]);
 
-  return { data, status, lastUpdated, refresh };
+  return { data, meta, status, lastUpdated, refresh };
 }
 
 export function useEngineStatus(): SyncPoll<EngineStatus> {

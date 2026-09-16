@@ -299,9 +299,28 @@ describe("Solana wallet activity (transaction normalization)", () => {
 
   it("reports unavailable when signatures cannot be fetched (RPC errors)", async () => {
     const rpc = makeRpc({ getSignatures: async () => null });
-    const page = await fetchWalletActivityPage(rpc, WALLET);
+    const page = await fetchWalletActivityPage(rpc, WALLET, { graceRetries: 1, graceDelayMs: 1 });
     expect(page.chainOnline).toBe(false);
     expect(page.errors[0]).toContain("Signature history unavailable");
+  });
+
+  it("grace-retries past a transient 429/backoff collision and recovers", async () => {
+    let calls = 0;
+    const rpc = makeRpc({
+      getSignatures: async (_a: string, limit: number) => {
+        calls += 1;
+        // First call: provider is in a burst-collision backoff (null).
+        // Second call (grace retry): the window has lifted — real data.
+        if (calls === 1) return null;
+        return [{ signature: "sig-after-retry", blockTime: 1_700_000_060, err: null }].slice(0, limit);
+      },
+      getTransaction: async () => null,
+    });
+    const page = await fetchWalletActivityPage(rpc, WALLET, { graceRetries: 2, graceDelayMs: 1 });
+    expect(calls).toBe(2);
+    expect(page.chainOnline).toBe(true);
+    expect(page.recordsCount).toBe(1);
+    expect(page.records[0]?.signature).toBe("sig-after-retry");
   });
 
   it("passes the pagination cursor through to the RPC", async () => {

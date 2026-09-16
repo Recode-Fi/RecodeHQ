@@ -63,7 +63,9 @@ export class SolanaRpcProvider {
     return Boolean(this.endpoint);
   }
 
-  /** Low-level JSON-RPC 2.0 call with timeout + 429 backoff. */
+  /** Low-level JSON-RPC 2.0 call with timeout + 429 backoff. Failures are
+   *  throttled-logged (first of a streak, then every 10th) so on-demand
+   *  routes and the audit trail can see WHY a value is unavailable. */
   async call<T>(method: string, params: unknown[] = []): Promise<T | null> {
     if (!this.endpoint) return null;
     if (Date.now() < this.nextAllowedAt) return null;
@@ -89,6 +91,7 @@ export class SolanaRpcProvider {
           Date.now() +
           Math.min(120_000, 5_000 * 2 ** Math.min(this.state.consecutiveFailures, 5));
         this.state.consecutiveFailures += 1;
+        this.logFailure(method, `HTTP ${res.status} — backing off`);
         return null;
       }
       if (!res.ok) throw new Error(`Solana RPC HTTP ${res.status}`);
@@ -109,7 +112,21 @@ export class SolanaRpcProvider {
           Date.now() +
           Math.min(120_000, 5_000 * 2 ** Math.min(this.state.consecutiveFailures, 5));
       }
+      this.logFailure(method, this.state.lastError);
       return null;
+    }
+  }
+
+  /** Milliseconds until the 429 backoff window lifts (0 = allowed now). */
+  msUntilAllowed(): number {
+    return Math.max(0, this.nextAllowedAt - Date.now());
+  }
+
+  /** Throttled failure logging: first failure of a streak, then every 10th. */
+  private logFailure(method: string, message: string): void {
+    const n = this.state.consecutiveFailures;
+    if (n === 1 || n % 10 === 0) {
+      console.warn(`[recode] solana-rpc: ${method} failed (${message}) — consecutive failures: ${n}`);
     }
   }
 
