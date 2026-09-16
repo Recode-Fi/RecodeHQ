@@ -1,5 +1,5 @@
-import { AssetIntelligenceView } from "@/components/asset/AssetIntelligenceView";
+import { AssetIntelSwitch } from "@/components/asset/AssetIntelSwitch";
 
 export default function AssetsPage() {
-  return <AssetIntelligenceView />;
+  return <AssetIntelSwitch />;
 }

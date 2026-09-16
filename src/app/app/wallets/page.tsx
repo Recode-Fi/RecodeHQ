@@ -3,40 +3,52 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { WhaleFeed } from "@/components/whales/WhaleFeed";
+import { useChain } from "@/providers/chain-provider";
+import { routeWalletLookup } from "@/lib/walletRouting";
 import { Panel } from "@/components/ui/primitives";
 import { fmtUsd, shortHash, timeAgo } from "@/lib/format";
-import { addressFamily } from "@/lib/types";
 
-export default function WalletsPage() {
+/**
+ * Wallet Intelligence search — the global network selector governs
+ * which wallet pipeline a lookup may use. An address whose family
+ * does not match the selected network gets a clean state, never
+ * another chain's wallet data.
+ */
+export function WalletsSearch() {
   const [value, setValue] = useState("");
-  const [invalid, setInvalid] = useState(false);
+  const [note, setNote] = useState<string | null>(null);
   const router = useRouter();
+  const { selected, selectedLabel } = useChain();
 
   const go = (e: React.FormEvent) => {
     e.preventDefault();
-    const v = value.trim();
-    // Address-family routing: EVM addresses are normalized to lowercase,
-    // base58 Solana addresses keep their exact case (case-sensitive).
-    const family = addressFamily(v);
-    if (!family) {
-      setInvalid(true);
+    const decision = routeWalletLookup(value.trim(), selected);
+    if (decision.kind === "invalid") {
+      setNote("Invalid wallet address — enter an EVM (0x…) or Solana (base58) address.");
       return;
     }
-    setInvalid(false);
-    // Routes live under /app — /wallet/<addr> (without the prefix) has no page
-    // and previously landed on the not-found surface.
-    router.push(`/app/wallet/${family === "evm" ? v.toLowerCase() : v}`);
+    if (decision.kind === "mismatch") {
+      setNote(decision.message);
+      return;
+    }
+    setNote(null);
+    router.push(`/app/wallet/${decision.address}`);
   };
+
+  const networkHint =
+    selected === "solana"
+      ? "Solana (base58) addresses — SOL, SPL tokens and wallet activity via the Solana pipeline."
+      : selected === "arc"
+        ? "Arc (0x…) addresses — native USDC, ERC-20 holdings and USDC activity via the Arc pipeline."
+        : `${selectedLabel} (0x…) addresses — live on-chain balances, transfer history and account age.`;
 
   return (
     <div className="mx-auto max-w-[1000px]">
       <header className="mb-5">
         <h1 className="text-xl font-semibold">Wallet Intelligence</h1>
         <p className="mt-1 max-w-2xl text-[12.5px] text-muted">
-          Inspect any public wallet on Robinhood Chain — no wallet connection required. Live
-          on-chain balances across every verified tokenized asset, transfer history and account
-          age, all read directly from the chain.
+          Inspect any public wallet on the selected network ({selectedLabel}) — no wallet
+          connection required. {networkHint}
         </p>
       </header>
 
@@ -46,14 +58,13 @@ export default function WalletsPage() {
             value={value}
             onChange={(e) => {
               setValue(e.target.value);
-              if (invalid) setInvalid(false);
+              if (note) setNote(null);
             }}
-            placeholder="0x… EVM or base58 Solana public address"
+            placeholder="Wallet public address (0x… EVM or base58 Solana)"
             spellCheck={false}
-            aria-invalid={invalid}
             aria-label="Wallet address"
             className={`tnum h-10 w-full rounded-[4px] border bg-panel-2 px-3.5 text-[13px] outline-none placeholder:text-faint focus:border-green/40 ${
-              invalid ? "border-neg" : "border-line"
+              note ? "border-neg" : "border-line"
             }`}
           />
           <button
@@ -63,7 +74,7 @@ export default function WalletsPage() {
             Analyze
           </button>
         </form>
-        {invalid ? <p className="mt-2 text-[11.5px] text-neg">Invalid wallet address</p> : null}
+        {note ? <p className="mt-2 text-[11.5px] text-neg">{note}</p> : null}
         <p className="mt-2 text-[10.5px] text-faint">
           ENS resolution and wallet labels require a naming provider — not yet configured.
         </p>
@@ -75,6 +86,10 @@ export default function WalletsPage() {
       <RecentWallets />
     </div>
   );
+}
+
+export default function WalletsPage() {
+  return <WalletsSearch />;
 }
 
 function RecentWallets() {
