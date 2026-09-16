@@ -810,6 +810,7 @@ const getWalletIntelligence: ToolDef = {
 };
 
 import { SOLANA_AGENT_TOOLS } from "@/server/solana/agentTools";
+import { ARC_AGENT_TOOLS } from "@/server/arc/agentTools";
 
 /* ── Registry ────────────────────────────────────────────── */
 
@@ -831,6 +832,7 @@ export const AGENT_TOOLS: ToolDef[] = [
   getWalletBalances,
   getWalletIntelligence,
   ...SOLANA_AGENT_TOOLS,
+  ...ARC_AGENT_TOOLS,
 ];
 
 export function toolByName(name: string): ToolDef | null {

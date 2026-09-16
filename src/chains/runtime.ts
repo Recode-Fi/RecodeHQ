@@ -6,6 +6,7 @@ export function toRuntime(
   selectedId: string,
   engineChainIds: number[],
   solanaOnline = false,
+  arcOnline = false,
 ): ChainRuntime[] {
   return NETWORKS.map((n) => ({
     id: n.id,
@@ -17,7 +18,12 @@ export function toRuntime(
     chainId: n.chainId,
     chainIdHex: n.chainIdHex,
     explorerUrl: n.explorerUrl,
-    indexed: n.family === "solana" ? solanaOnline : networkIndexed(n, engineChainIds),
+    indexed:
+      n.family === "solana"
+        ? solanaOnline
+        : n.id === "arc"
+          ? arcOnline
+          : networkIndexed(n, engineChainIds),
     note: n.note,
   }));
 }

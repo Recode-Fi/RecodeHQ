@@ -15,6 +15,7 @@ import type { ChainRuntime } from "@/lib/types";
 import { toRuntime } from "@/chains/runtime";
 import { useEngineStatus } from "@/hooks/useSync";
 import { useSolanaStatus } from "@/hooks/useSolana";
+import { useArcStatus } from "@/hooks/useArc";
 
 interface ChainContextValue {
   /** "all" | network id */
@@ -27,6 +28,8 @@ interface ChainContextValue {
   filterExcludesData: boolean;
   /** True when the selected network is the Solana (non-EVM) family. */
   isSolana: boolean;
+  /** True when the selected network is Arc (EVM family, chain 5042). */
+  isArc: boolean;
 }
 
 const ChainContext = createContext<ChainContextValue | null>(null);
@@ -38,6 +41,7 @@ export function ChainProvider({ children }: { children: ReactNode }) {
   const [hydrated, setHydrated] = useState(false);
   const { data: engine } = useEngineStatus();
   const { data: solanaStatus } = useSolanaStatus();
+  const { data: arcStatus } = useArcStatus();
 
   useEffect(() => {
     const saved = window.localStorage.getItem(STORAGE_KEY);
@@ -62,10 +66,11 @@ export function ChainProvider({ children }: { children: ReactNode }) {
   }, [engine]);
 
   const solanaOnline = solanaStatus?.tokensIndexed != null && solanaStatus.tokensIndexed > 0;
+  const arcOnline = arcStatus?.tokensIndexed != null && arcStatus.tokensIndexed > 0;
 
   const runtimes = useMemo(
-    () => toRuntime(selected, engineChainIds, solanaOnline),
-    [selected, engineChainIds, solanaOnline],
+    () => toRuntime(selected, engineChainIds, solanaOnline, arcOnline),
+    [selected, engineChainIds, solanaOnline, arcOnline],
   );
 
   const value = useMemo<ChainContextValue>(() => {
@@ -77,6 +82,7 @@ export function ChainProvider({ children }: { children: ReactNode }) {
       runtimes,
       filterExcludesData: net != null && net.family !== "solana" && net.engineChainId == null,
       isSolana: net?.family === "solana",
+      isArc: net?.id === "arc",
     };
   }, [selected, setSelected, runtimes, hydrated]);
 

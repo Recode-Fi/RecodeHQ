@@ -13,6 +13,7 @@
 // icon — the feather mark in chain brand color #CF0).
 import solanaIcon from "@web3icons/core/svgs/tokens/branded/SOL.svg";
 import robinhoodChainIcon from "@web3icons/core/svgs/networks/branded/robinhood.svg";
+import arcIcon from "@web3icons/core/svgs/networks/branded/arc.svg";
 
 export interface NetworkConfig {
   id: string;
@@ -71,12 +72,34 @@ export const SOLANA: NetworkConfig = {
 };
 
 /**
+ * Arc — Circle's USDC-gas Layer-1 (mainnet LIVE, chain 5042).
+ * Official configuration from docs.arc.network / docs.arc.io:
+ * RPC https://rpc.mainnet.arc.io (override via RECODE_ARC_RPC_URL),
+ * explorer https://explorer.arc.io, native gas = USDC (18 decimals),
+ * EVM-compatible (Osaka baseline) — uses the EVM address family and
+ * the dedicated Arc intelligence layer (src/server/arc/).
+ */
+export const ARC: NetworkConfig = {
+  id: "arc",
+  name: "Arc",
+  shortName: "ARC",
+  kind: "chain",
+  family: "evm",
+  chainId: 5042,
+  chainIdHex: "0x13b2",
+  explorerUrl: "https://explorer.arc.io",
+  engineChainId: 5042,
+  note: "Live EVM network (Circle). USDC gas. Indexed via DexScreener (chain 'arc') + Arc JSON-RPC.",
+  icon: arcIcon,
+};
+
+/**
  * Future EVM chains register here with engineChainId set once their
  * indexer/provider is wired — no UI changes required.
  */
 export const RESERVED_CHAINS: NetworkConfig[] = [];
 
-export const NETWORKS: NetworkConfig[] = [SOLANA, ROBINHOOD_CHAIN, ...RESERVED_CHAINS];
+export const NETWORKS: NetworkConfig[] = [SOLANA, ARC, ROBINHOOD_CHAIN, ...RESERVED_CHAINS];
 
 /** True when the given network id is a non-EVM family. */
 export function isSolanaNetwork(id: string): boolean {

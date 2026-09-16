@@ -19,4 +19,11 @@ export async function register() {
   } catch (err) {
     console.error("[recode] failed to start Solana intelligence layer:", err);
   }
+  if (process.env.RECODE_ARC_DISABLE === "1") return;
+  try {
+    const { getArcSyncEngine } = await import("./server/arc/engine");
+    getArcSyncEngine().start();
+  } catch (err) {
+    console.error("[recode] failed to start Arc intelligence layer:", err);
+  }
 }

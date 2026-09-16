@@ -3,12 +3,15 @@
 import { useParams } from "next/navigation";
 import { WalletIntel } from "@/components/wallet/WalletIntel";
 import { SolanaWalletIntel } from "@/components/solana/SolanaWalletIntel";
+import { ArcWalletIntel } from "@/components/arc/ArcWalletIntel";
+import { useChain } from "@/providers/chain-provider";
 import { addressFamily } from "@/lib/types";
 
 export default function WalletPage() {
   const params = useParams<{ address: string }>();
   const raw = (params?.address ?? "").trim();
   const family = addressFamily(raw);
+  const { isArc } = useChain();
 
   if (!family) {
     return (
@@ -25,10 +28,8 @@ export default function WalletPage() {
     );
   }
 
-  // Address families never share logic: 0x… → EVM services, base58 → Solana RPC.
-  return family === "solana" ? (
-    <SolanaWalletIntel address={raw} />
-  ) : (
-    <WalletIntel address={raw.toLowerCase()} />
-  );
+  // Address families never share logic: 0x… → EVM services (Arc when the
+  // Arc network is selected), base58 → Solana RPC.
+  if (family === "solana") return <SolanaWalletIntel address={raw} />;
+  return isArc ? <ArcWalletIntel address={raw.toLowerCase()} /> : <WalletIntel address={raw.toLowerCase()} />;
 }
