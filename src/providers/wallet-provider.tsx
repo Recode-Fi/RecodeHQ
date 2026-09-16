@@ -63,19 +63,11 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     const onChain = (...args: unknown[]) => setChainIdHex(args[0] as string);
     eth?.on?.("accountsChanged", onAccounts);
     eth?.on?.("chainChanged", onChain);
-    // Silent reconnect for previously-authorized wallets: eth_accounts
-    // never pops a dialog — an authorized connection restores access
-    // (gate stays open on refresh); unauthorized stays disconnected.
-    void (eth
-      ?.request?.({ method: "eth_accounts" }) as Promise<string[] | unknown> | undefined)
-      ?.then((accounts) => {
-        if (Array.isArray(accounts) && accounts.length > 0) {
-          setAddress(String(accounts[0]).toLowerCase());
-        }
-      })
-      .catch(() => {
-        /* passive restore failures leave the gate state untouched */
-      });
+    // NOTE: deliberately NO automatic connection/restore here. No
+    // passive account requests on page load — the wallet stays
+    // DISCONNECTED until the user explicitly clicks Connect Wallet.
+    // accountsChanged/chainChanged listeners are passive event
+    // handling (they fire only on user actions inside the wallet).
     return () => {
       window.removeEventListener("eip6963:announceProvider", onAnnounce as EventListener);
       eth?.removeListener?.("accountsChanged", onAccounts);
