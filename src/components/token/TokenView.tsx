@@ -116,7 +116,7 @@ export function TokenView() {
               <dt className="text-muted">Contract</dt>
               <dd className="flex items-center gap-2 text-right">
                 <span className="tnum">{shortAddr(d.contract, 10, 8)}</span>
-                <CopyButton text={d.contract} />
+                <CopyButton text={d.contract ?? ""} />
               </dd>
             </div>
             <div className="flex items-center justify-between gap-4 border-b border-line-soft pb-1.5">

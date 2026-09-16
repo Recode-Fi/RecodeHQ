@@ -57,8 +57,11 @@ export interface RecodeTokenConfig {
 }
 
 export const RECODE_CONFIG: RecodeTokenConfig = {
-  launched: false,
-  contractAddress: null, // ← ADD OFFICIAL CONTRACT ADDRESS HERE (0x…, Robinhood Chain chain id 4663)
+  // CANONICAL ADDRESS — set RECODE_OFFICIAL_TOKEN_ADDRESS once (env or the
+  // Vercel project variable) and every token surface activates
+  // automatically. No other file needs editing.
+  contractAddress: (process.env.RECODE_OFFICIAL_TOKEN_ADDRESS ?? "").trim() || null,
+  launched: ((process.env.RECODE_OFFICIAL_TOKEN_ADDRESS ?? "").trim() || null) !== null,
 
   symbol: "RECODE",
   name: "RECODE",

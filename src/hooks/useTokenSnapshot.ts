@@ -4,32 +4,28 @@ import {
   type TokenEnvelope,
   type TokenStatus,
 } from "@/services/recodeTokenService";
-import { RECODE_CONFIG } from "@/lib/recodeConfig";
 
 /** UI-facing state derived from the token envelope (never faked "live"). */
 export type TokenUiState = "connecting" | "live" | "delayed" | "unavailable" | "unconfigured";
 
 /**
- * Visibility-aware token snapshot poller (sensible 30s interval — a single
- * lightweight endpoint, paused while the tab is hidden).
- *
- * Initial state is derived from the central token configuration: when the
- * token is not launched/configured the surface renders its honest
- * "unconfigured" state immediately — even on the server — so the TBA
- * contract row appears without a client-side flash.
+ * Visibility-aware token snapshot poller (30s interval — one lightweight
+ * endpoint, paused while the tab is hidden). SERVER-AUTHORITATIVE: the
+ * configured/launched state comes from the API (which reads the central
+ * env-driven token config), never from client-side env values. The UI
+ * starts in "connecting" and renders the server's honest state.
  */
 export function useTokenSnapshot(intervalMs = 30_000): {
   envelope: TokenEnvelope;
   ui: TokenUiState;
   reload: () => void;
 } {
-  const preUnconfigured = !RECODE_CONFIG.launched;
-  const [envelope, setEnvelope] = useState<TokenEnvelope>(
-    preUnconfigured
-      ? { status: "unconfigured", data: null, message: "Token contract not yet configured" }
-      : { status: "unavailable", data: null },
-  );
-  const [ui, setUi] = useState<TokenUiState>(preUnconfigured ? "unconfigured" : "connecting");
+  const [envelope, setEnvelope] = useState<TokenEnvelope>({
+    status: "unavailable",
+    data: null,
+    message: undefined,
+  });
+  const [ui, setUi] = useState<TokenUiState>("connecting");
 
   const load = useCallback(async () => {
     const res = await recodeTokenService.snapshot();

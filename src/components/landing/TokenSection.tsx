@@ -56,6 +56,24 @@ function Na() {
 export function TokenSection() {
   const { envelope, ui } = useTokenSnapshot();
   const d = envelope.data;
+  // CA / chain come from the SERVER snapshot (server-authoritative —
+  // client env values are not used for identity).
+  const contract = d?.contract ?? null;
+  const chainName = d?.chainName ?? "Robinhood Chain";
+  const chainId = d?.chainId ?? 4663;
+  const explorerUrl = d?.explorerUrl ?? "https://robinhoodchain.blockscout.com";
+  // Cross-chain safety: the card reports the token's REAL deployment
+  // chain (resolved market data), never another chain's metrics.
+  const deployedElsewhere = d?.chainId != null && d.chainId !== 4663;
+  const stateMessage =
+    ui === "unconfigured"
+      ? "Official RECODE contract not configured."
+      : envelope.message ??
+        (ui === "connecting"
+          ? "Connecting to market data…"
+          : ui === "unavailable"
+            ? "Live market provider temporarily unavailable."
+            : "Market data is informational only and is not investment advice.");
 
   return (
     <section className="border-b border-line bg-surface/40">
@@ -64,7 +82,7 @@ export function TokenSection() {
           <div>
             <h2 className="text-3xl font-bold tracking-[-0.01em] text-text">RECODE Token</h2>
             <p className="mt-2 text-[13.5px] text-muted">
-              Live market data from the RECODE token on Robinhood Chain.
+              Live market data from the RECODE token on {deployedElsewhere && d ? `${d.chainName ?? "its deployed chain"} (chain ${d.chainId})` : chainName}.
             </p>
           </div>
           <StatusChip ui={ui} />
@@ -76,7 +94,7 @@ export function TokenSection() {
               ${RECODE_CONFIG.symbol}
             </span>
             <span className="text-[10.5px] uppercase tracking-[0.12em] text-faint">
-              {RECODE_CONFIG.network.name} · {RECODE_CONFIG.network.chainId}
+              {(deployedElsewhere && d ? d.chainName : chainName)?.toUpperCase()} · {deployedElsewhere && d ? d.chainId : chainId}
             </span>
           </div>
 
@@ -121,7 +139,7 @@ export function TokenSection() {
               {RECODE_CONFIG.contractAddress ? (
                 <span className="tnum mt-0.5 flex items-center gap-2 text-[12.5px] font-semibold">
                   <a
-                    href={`${RECODE_CONFIG.links.explorer ?? ""}/token/${RECODE_CONFIG.contractAddress}`}
+                    href={`${explorerUrl}/token/${contract}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-green transition-colors hover:underline"
@@ -130,7 +148,7 @@ export function TokenSection() {
                     {shortAddr(RECODE_CONFIG.contractAddress, 10, 8)}
                   </a>
                   <CopyButton
-                    text={RECODE_CONFIG.contractAddress}
+                    text={contract ?? ""}
                     label="Copy RECODE contract address"
                   />
                 </span>
@@ -150,11 +168,15 @@ export function TokenSection() {
           <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-5 py-3.5">
             <p className="max-w-md text-[10.5px] leading-relaxed text-faint">
               {ui === "unconfigured"
-                ? "The official RECODE token contract has not been announced yet. Metrics activate automatically once it is verified and indexed — values are never estimated."
-                : "Market data is informational only and is not investment advice."}
+                ? stateMessage
+                : ui === "unavailable" && envelope.message
+                  ? envelope.message
+                  : deployedElsewhere
+                    ? `RECODE token is deployed on ${d?.chainName ?? "another chain"} — the metrics above are that deployment's verified market data.`
+                    : "Market data is informational only and is not investment advice."}
             </p>
             <Link
-              href="/app/token"
+              href={contract ? "/app/asset/RECODE" : "/app/token"}
               className="rounded-[4px] btn-accent px-4 py-2 text-[12px] font-semibold text-green transition-colors"
             >
               View RECODE Token →

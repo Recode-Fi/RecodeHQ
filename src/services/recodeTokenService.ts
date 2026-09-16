@@ -8,13 +8,23 @@
 export interface RecodeTokenSnapshot {
   symbol: string;
   name: string;
-  contract: string;
-  chainId: number;
+  /** Official contract/mint address (null when not configured). */
+  contract: string | null;
+  /** True when the official address is configured server-side. */
+  configured: boolean;
+  /** Real deployment chain id (resolution-verified). */
+  chainId: number | null;
+  chainName: string | null;
+  explorerUrl: string | null;
   price: number | null;
   change24hPct: number | null;
   marketCap: number | null;
   volume24h: number | null;
   liquidity: number | null;
+  pairsTotal: number | null;
+  logoUrl: string | null;
+  dexId: string | null;
+  pairAddress: string | null;
   updatedAt: number;
   source: string;
 }
