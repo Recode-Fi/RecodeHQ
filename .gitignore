@@ -49,5 +49,11 @@ dev-pid.txt
 .tmp-*
 .dev-*.log
 .tmp-*.log
-`n# generic build/test output`ndist/`ncoverage/`n*.log`n# OS files`nThumbs.db
-`n# local banner-draft workspace (final assets live in public/social/)`nrecode-x-thread-banners/
+# generic build/test output
+dist/
+coverage/
+*.log
+# OS files
+Thumbs.db
+# local banner-draft workspace (final assets live in public/social/)
+recode-x-thread-banners/
