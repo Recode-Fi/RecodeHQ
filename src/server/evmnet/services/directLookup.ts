@@ -54,7 +54,7 @@ export async function evmNetDirectLookup(
   const store = getEvmNetStore(chain).get();
   const now = Date.now();
 
-  let token = store.tokens[address] ?? null;
+  let token: EvmNetToken | null = store.tokens[address] ?? null;
   if (best) {
     const fields = evmNetMarketFields(best);
     const base: EvmNetToken = token ?? {

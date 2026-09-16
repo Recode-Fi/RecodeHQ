@@ -163,7 +163,7 @@ export async function arcDirectLookup(
   const store = getArcStore().get();
   const now = Date.now();
 
-  let token = store.tokens[address] ?? null;
+  let token: ArcToken | null = store.tokens[address] ?? null;
   if (best) {
     const fields = arcMarketFields(best);
     const base: ArcToken = token ?? {
