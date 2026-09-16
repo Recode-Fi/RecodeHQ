@@ -44,3 +44,8 @@ dev-err.log
 
 # dev server pid file
 dev-pid.txt
+
+# scratch/verification scripts and dev logs
+.tmp-*
+.dev-*.log
+.tmp-*.log

@@ -1,1 +1,0 @@
-﻿import fs from "node:fs"; const src=fs.readFileSync(".tmp-alchemy-battery.mjs","utf8"); const m=src.match(/const W = \"([^\"]+)\"/); const W=m[1]; console.log("battery W len:", W.length); const codes=[...W].map(c=>c.charCodeAt(0)); console.log(codes.join(","));
