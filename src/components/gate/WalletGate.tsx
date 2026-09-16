@@ -25,7 +25,7 @@ export function WalletGate({ variant = "page" }: { variant?: "page" | "embedded"
   }, []);
 
   const gateNetwork = isGateNetwork(selected) ? (selected as GateNetwork) : null;
-  const status = gateStatus({ mounted, selected, evmAddress: evm.address, solAddress: sol.address });
+  const status = gateStatus({ mounted, selected, evmAddress: evm.address, solAddress: sol.address, evmChainIdHex: evm.chainIdHex });
   const networks = useMemo(() => runtimes.filter((r) => isGateNetwork(r.id)), [runtimes]);
   const active = gateNetwork ? networks.find((n) => n.id === gateNetwork) ?? null : null;
   const walletName =

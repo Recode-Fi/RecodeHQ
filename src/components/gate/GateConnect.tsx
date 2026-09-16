@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useWallet } from "@/providers/wallet-provider";
 import { useSolanaWallet } from "@/providers/solana-wallet-context";
 import { getWallet } from "@/lib/wallets";
@@ -28,6 +29,9 @@ export function GateConnectStep({
       </div>
     );
   }
+  if (status.kind === "wrong-network") {
+    return <WrongNetworkCard status={status} />;
+  }
   if (gateNetwork == null) {
     return (
       <div className="rounded-[6px] border border-dashed border-line px-4 py-3 text-[12.5px] text-muted">
@@ -40,6 +44,40 @@ export function GateConnectStep({
   }
   if (status.kind !== "connect") return null;
   return status.family === "solana" ? <SolanaConnect /> : <EvmConnect />;
+}
+
+function WrongNetworkCard({ status }: { status: Extract<GateStatus, { kind: "wrong-network" }> }) {
+  const evm = useWallet();
+  const [switching, setSwitching] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+  return (
+    <div className="rounded-[6px] border border-warn/50 bg-warn/10 px-4 py-3.5">
+      <div className="text-[12.5px] font-semibold text-warn">Wrong network</div>
+      <p className="mt-1 text-[12px] text-muted">
+        Your wallet is connected to a different EVM network than the selected one. Approve the
+        network switch in your wallet to continue (the request is made only when you click below).
+      </p>
+      <button
+        type="button"
+        onClick={async () => {
+          setSwitching(true);
+          setErr(null);
+          const ok = await evm.ensureChain(status.targetHex);
+          setSwitching(false);
+          if (!ok) setErr("Network switch rejected or unavailable. Add the network in your wallet's settings and try again.");
+        }}
+        disabled={switching}
+        className="mt-3 w-full rounded-[6px] border border-green/40 bg-green-soft px-4 py-2.5 text-[12.5px] font-semibold text-green transition-colors hover:border-green/70 disabled:opacity-60"
+      >
+        {switching ? "Waiting for wallet approval…" : `SWITCH TO ${status.targetName.toUpperCase()}`}
+      </button>
+      {err ? <div className="mt-2 text-[11.5px] text-neg">{err}</div> : null}
+      <p className="mt-2 text-[11px] text-faint">
+        Access is verified against the resulting chain ID after the switch — never granted
+        automatically.
+      </p>
+    </div>
+  );
 }
 
 function ReadyCard({
@@ -71,7 +109,7 @@ function ReadyCard({
           </div>
         </div>
         <span className="shrink-0 rounded-full border border-pos/40 px-2.5 py-1 text-[10.5px] font-semibold uppercase tracking-wider text-pos">
-          Connected
+          ✓ Wallet Connected
         </span>
       </div>
       <button
