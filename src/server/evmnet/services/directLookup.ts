@@ -86,19 +86,27 @@ export async function evmNetDirectLookup(
     store.tokens[address] = base;
     getEvmNetStore(chain).save();
     token = base;
+  } else {
+    // No exact-match pair: never serve a (possibly legacy-contaminated)
+    // store entry as this address's market — self-healing.
+    token = null;
   }
 
   const code = await rpc.getCode(address);
   const isContract = code != null && code !== "0x";
-  let symbol: string | null = token?.symbol ?? null;
-  let name: string | null = token?.name ?? null;
-  let decimals: number | null = token?.decimals ?? null;
+  // On-chain identity is authoritative for direct lookups.
+  let symbol: string | null = null;
+  let name: string | null = null;
+  let decimals: number | null = null;
   if (isContract) {
-    symbol = (await rpc.getSymbol(address)) ?? symbol;
-    name = (await rpc.getName(address)) ?? name;
-    decimals = (await rpc.getDecimals(address)) ?? decimals;
+    symbol = (await rpc.getSymbol(address)) ?? token?.symbol ?? null;
+    name = (await rpc.getName(address)) ?? token?.name ?? null;
+    decimals = (await rpc.getDecimals(address)) ?? token?.decimals ?? null;
   } else if (code == null) {
     errors.push("Contract code unavailable (RPC error)");
+    symbol = token?.symbol ?? null;
+    name = token?.name ?? null;
+    decimals = token?.decimals ?? null;
   }
 
   return {
