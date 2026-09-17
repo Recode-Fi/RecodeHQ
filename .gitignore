@@ -57,3 +57,6 @@ coverage/
 Thumbs.db
 # local banner-draft workspace (final assets live in public/social/)
 recode-x-thread-banners/
+
+# local social/X update assets (kept local for posting, outside the repo)
+public/social/recode-updates/
