@@ -45,7 +45,6 @@ const FOOTER_NAV = [
 
 export default function LandingPage() {
   const external = [
-    { label: "Documentation", url: "https://recode-fi.xyz/docs" },
     { label: "GitHub", url: process.env.NEXT_PUBLIC_RECODE_GITHUB_URL ?? "https://github.com/Recode-Fi" },
     { label: "X / Twitter", url: process.env.NEXT_PUBLIC_RECODE_TWITTER_URL ?? "https://x.com/RecodeHQ" },
   ];
