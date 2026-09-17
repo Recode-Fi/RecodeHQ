@@ -45,9 +45,9 @@ const FOOTER_NAV = [
 
 export default function LandingPage() {
   const external = [
-    { label: "Documentation", url: process.env.NEXT_PUBLIC_RECODE_DOCS_URL },
-    { label: "GitHub", url: process.env.NEXT_PUBLIC_RECODE_GITHUB_URL },
-    { label: "X / Twitter", url: process.env.NEXT_PUBLIC_RECODE_TWITTER_URL },
+    { label: "Documentation", url: "https://recode-fi.xyz/docs" },
+    { label: "GitHub", url: process.env.NEXT_PUBLIC_RECODE_GITHUB_URL ?? "https://github.com/Recode-Fi" },
+    { label: "X / Twitter", url: process.env.NEXT_PUBLIC_RECODE_TWITTER_URL ?? "https://x.com/RecodeHQ" },
   ];
   return (
     <div className="min-h-dvh bg-bg text-text">
@@ -62,6 +62,7 @@ export default function LandingPage() {
             <a href="#rwa" className="transition-colors hover:text-text">RWA</a>
             <a href="#app" className="transition-colors hover:text-text">App</a>
             <a href="#how" className="transition-colors hover:text-text">How it works</a>
+            <Link href="/docs" className="transition-colors hover:text-text">Docs</Link>
           </nav>
           <div className="ml-auto flex items-center gap-2">
             <ThemeToggle />

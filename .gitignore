@@ -60,3 +60,5 @@ recode-x-thread-banners/
 
 # local social/X update assets (kept local for posting, outside the repo)
 public/social/recode-updates/
+public/social/recode-website-live.*
+public/social/recode-website-live-announcement.*

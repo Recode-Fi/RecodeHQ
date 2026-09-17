@@ -1,5 +1,7 @@
 # RECODE — Decode what moves markets.
 
+**[recode-fi.xyz](https://recode-fi.xyz)** · **[GitHub](https://github.com/Recode-Fi)** · **[X](https://x.com/RecodeHQ)** · **[Docs](https://recode-fi.xyz/docs)**
+
 RECODE is an on-chain and market intelligence platform across **six live
 networks** — market intelligence, scanning, asset intelligence, wallet
 intelligence, whale activity, smart-money flows, radar signals and an
